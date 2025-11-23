@@ -1,0 +1,14 @@
+{
+    "id": 5,
+    "slug": "riyad-arrar",
+    "nom": "Riyad Arrar",
+    "titre": "Agent De S\u00e9curit\u00e9 SIAP",
+    "photo_url": "/static/uploads/0cadba23-dc83-454b-b015-095f1c4e28cc_Snapchat-1315690138.jpg",
+    "liens": [
+        {
+            "nom": "LinkedIn",
+            "url": "https://www.linkedin.com/in/riyad-arrar-b16235263/",
+            "type": "LinkedIn"
+        }
+    ]
+}

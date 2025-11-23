@@ -1,0 +1,14 @@
+{
+    "id": 3,
+    "slug": "hicham-ait-ali",
+    "nom": "HICHAM AIT ALI",
+    "titre": "Agent de s\u00e9curit\u00e9",
+    "photo_url": "/static/uploads/77f8e86c-619a-4d59-ad9b-9a731274a60a_2e25b428-dcf7-479c-a853-2942406f1959_moua.png",
+    "liens": [
+        {
+            "nom": "LinkedIn",
+            "url": "https://www.linkedin.com/in/hicham-ait-ali-1578b92a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+            "type": "LinkedIn"
+        }
+    ]
+}

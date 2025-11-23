@@ -1,0 +1,12 @@
+{
+    "id": 1,
+    "slug": "hicham-ait-ali",
+    "nom": "HICHAM AIT ALI",
+    "titre": "Agent de s\u00e9curit\u00e9",
+    "photo_url": "/static/uploads/0cff72d3-971c-41ed-9424-1ea53d465dfb_f9626ba6-3a09-400d-8bcc-aaaa36db8d52_b478b84b-c88d-4cc4-9b74-a0cdbf7ae7d3_eed511c1-16b8-4ba6-bb71-12b95fc5ce18_2e25b428-dcf7-479c-a853-2942406f1959_moua.png",
+    "couleur_texte_h1": "#001F3F",
+    "couleur_texte_bio": "#444444",
+    "photo_position_x": "50%",
+    "photo_position_y": "50%",
+    "liens": []
+}

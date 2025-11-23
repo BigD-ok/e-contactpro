@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Clients - E-Contact Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Styles CSS critiques pour la page (fusionnés) */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .profil-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .profile-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+        }
+        .profile-table th, .profile-table td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        .profile-table th { 
+            background-color: #f2f2f2; 
+        }
+        .profile-thumb { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            margin-right: 10px; 
+            vertical-align: middle; 
+            border: 1px solid #ccc;
+        }
+        .btn.principal {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="profil-container"> 
+        <h1 style="color: #343a40; text-align: left; font-size: 2em; margin-bottom: 20px;">Gestion des Clients</h1>
+        
+        <p style="text-align: right; margin-bottom: 15px;">
+            Gérez ici les cartes de vos clients. <a href="{{ url_for('logout') }}" style="color: red; font-weight: bold;">Déconnexion</a>
+        </p>
+        
+        <table class="profile-table">
+            <thead>
+                <tr>
+                    <th>Client / Photo</th>
+                    <th>URL/Slug</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profil in profiles %}
+                <tr>
+                    <td>
+                        {% if profil.photo_url %}
+                        <img src="{{ profil.photo_url }}" alt="{{ profil.nom }}" class="profile-thumb">
+                        {% else %}
+                        <img src="https://via.placeholder.com/40/CCCCCC/808080?text=👤" alt="Aucune Photo" class="profile-thumb">
+                        {% endif %}
+                        
+                        {{ profil.nom if profil.nom else 'PROFIL VIDE' }}
+                    </td>
+                    <td>/{{ profil.slug }}</td>
+                    <td>
+                        <a href="{{ url_for('edition_profil', slug_profil=profil.slug) }}" class="btn principal" style="padding: 5px 10px; margin: 0 5px 0 0; font-size: 0.9em;">Modifier</a>
+                        
+                        <form method="POST" action="{{ url_for('delete_profile', slug_profil=profil.slug) }}" style="display: inline-block;">
+                            <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer {{ profil.nom }} ?')" 
+                                class="btn" style="background-color: #dc3545; border-color: #dc3545; padding: 5px 10px; margin: 0; font-size: 0.85em; width: auto; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('edition_profil', slug_profil='new-profile-temp') }}" class="btn principal" style="margin-top: 20px; background-color: #198754; border-color: #198754;">+ Créer un Nouveau Profil</a>
+    </div>
+</body>
+</html>

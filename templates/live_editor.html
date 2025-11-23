@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Editor - {{ profil.nom }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+    <style>
+        /* Styles spécifiques au Layout ADMIN */
+        body {
+            display: flex; 
+            padding-top: 0 !important;
+            background-color: #f4f6f9;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 300px; /* Largeur ajustée pour l'éditeur */
+            background-color: #212529; 
+            color: #f8f9fa;
+            height: 100vh;
+            position: fixed;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+        .sidebar-logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 25px;
+            border-radius: 8px; 
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .sidebar-nav a {
+            display: block;
+            color: #ced4da;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s, color 0.2s;
+            font-weight: 500;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background-color: #495057;
+            color: white;
+        }
+        .preview-area {
+            flex-grow: 1;
+            margin-left: 300px; 
+            padding: 20px;
+        }
+        .preview-content {
+            max-width: 450px; 
+            margin: 0 auto;
+            padding-top: 20px; 
+        }
+        #preview-iframe {
+            width: 100%; 
+            height: calc(100vh - 40px);
+            border: none; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.3); 
+            border-radius: 20px;
+        }
+        /* Styles de la palette */
+        .color-palette-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            position: relative;
+            margin-top: 5px;
+            border: 2px solid transparent;
+        }
+        .color-palette-swatch.active {
+            border: 2px solid #03a9f4; /* Mettre en surbrillance la couleur active */
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="{{ url_for('static', filename='uploads/logo_econtact_pro.jpg') }}" 
+             alt="E-Contact Pro" 
+             class="sidebar-logo">
+        
+        <hr style="border-top: 1px solid #495057; margin-bottom: 25px;">
+
+        <div class="sidebar-nav">
+            <a href="{{ url_for('profiles_list') }}">
+                👥 Gérer les Clients
+            </a>
+            <a href="{{ url_for('edition_profil', slug_profil=profil.slug) }}">
+                📝 Éditer les Infos & Liens
+            </a>
+            <a href="{{ url_for('live_edit', slug_profil=profil.slug) }}" class="active">
+                🎨 Éditeur Visuel
+            </a>
+            <a href="{{ url_for('logout') }}" style="color: #dc3545; margin-top: 30px;">
+                🚪 Déconnexion
+            </a>
+        </div>
+        
+        <hr style="border-top: 1px solid #495057; margin-top: 25px;">
+
+
+        <h2 style="color: #03a9f4;">Éditeur Visuel</h2>
+
+        <p><a href="{{ url_for('profiles_list') }}" style="color: #ced4da; font-weight: bold; text-decoration: none;">← Retour à la Liste</a></p>
+
+        <form id="design-form" method="POST" action="{{ url_for('live_edit', slug_profil=profil.slug) }}">
+            
+            <button type="submit" class="btn principal" style="width: 100%;">Enregistrer le Design Final</button>
+            <a href="{{ url_for('profil_public', slug_profil=profil.slug) }}" target="_blank" class="btn" style="width: 100%; margin-top: 10px;">Voir le Profil Public (Final)</a>
+            <hr>
+
+            <h3 style="font-size: 1.2em;">Position de la Photo</h3>
+
+            <p style="font-size: 0.9em; color: #6c757d;">
+                Position (X: <span id="x_value">{{ profil.photo_position_x }}</span> / Y: <span id="y_value">{{ profil.photo_position_y }}</span>)
+            </p>
+
+            <input type="hidden" id="photo_pos_x_value" name="photo_pos_x_value" value="{{ profil.photo_position_x }}">
+            <input type="hidden" id="photo_pos_y_value" name="photo_pos_y_value" value="{{ profil.photo_position_y }}">
+            
+            <input type="hidden" id="couleur_principale_hex" name="couleur_principale_hex" value="{{ profil.couleur_principale }}">
+            <input type="hidden" id="couleur_fond_hex" name="couleur_fond_hex" value="{{ profil.couleur_fond }}">
+            <input type="hidden" id="couleur_texte_h1_hex" name="couleur_texte_h1_hex" value="{{ profil.couleur_texte_h1 }}">
+            <input type="hidden" id="couleur_texte_bio_hex" name="couleur_texte_bio_hex" value="{{ profil.couleur_texte_bio }}">
+
+
+            <h3 style="font-size: 1.2em; margin-top: 20px;">Palette Principale</h3>
+
+            <label>Couleur Principale (Boutons)</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                {% set palette_principale = ['#001F3F', '#343A40', '#2F4F4F', '#5B3979', '#007BFF', '#CC5500', '#8B0000', '#6C757D'] %}
+                {% for color in palette_principale %}
+                    <div class="color-palette-swatch" data-target="principale" data-color="{{ color }}" style="background-color: {{ color }};"></div>
+                {% endfor %}
+            </div>
+            
+            <label style="margin-top: 20px;">Couleur de Fond</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                {% set palette_fond = ['#F8F9FA', '#E9ECEF', '#CED4DA', '#343A40', '#121212', '#FFFFFF', '#DEB887', '#AC1B1B'] %}
+                {% for color in palette_fond %}
+                    <div class="color-palette-swatch" data-target="fond" data-color="{{ color }}" style="background-color: {{ color }};"></div>
+                {% endfor %}
+            </div>
+            
+            <hr>
+            
+            <h3 style="font-size: 1.2em;">Couleurs du Texte</h3>
+
+            <label>Couleur Nom/Poste</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                {% set palette_texte_h1 = ['#000000', '#FFFFFF', '#001F3F', '#8B0000', '#343A40', '#6C757D'] %}
+                {% for color in palette_texte_h1 %}
+                    <div class="color-palette-swatch" data-target="texte_h1" data-color="{{ color }}" style="background-color: {{ color }};"></div>
+                {% endfor %}
+            </div>
+
+            <label style="margin-top: 20px;">Couleur Biographie</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                {% set palette_texte_bio = ['#444444', '#000000', '#FFFFFF', '#6C757D', '#5B3979', '#2F4F4F'] %}
+                {% for color in palette_texte_bio %}
+                    <div class="color-palette-swatch" data-target="texte_bio" data-color="{{ color }}" style="background-color: {{ color }};"></div>
+                {% endfor %}
+            </div>
+
+        </form>
+        
+        <hr>
+        
+        <a href="{{ url_for('edition_profil', slug_profil=profil.slug) }}" class="btn" style="width: 100%; background-color: #6c757d !important; border-color: #6c757d !important; color: white !important;">
+            Modifier les Données & Liens
+        </a>
+
+    </div>
+
+    <div class="preview-area">
+        <div class="preview-content" id="preview-frame-container">
+            <iframe id="preview-iframe" src="{{ url_for('profil_public', slug_profil=profil.slug) }}" 
+                    style="width: 100%; height: 100vh; border: none; box-shadow: 0 0 10px rgba(0,0,0,0.3); border-radius: 20px;"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('preview-iframe');
+        const posInputX = document.getElementById('photo_pos_x_value');
+        const posInputY = document.getElementById('photo_pos_y_value');
+
+        // --- Fonctions de mise à jour (Couleurs) ---
+        function updateSwatch(targetName, selectedColor) {
+            document.querySelectorAll(`[data-target="${targetName}"]`).forEach(swatch => {
+                swatch.classList.remove('active');
+                if (swatch.dataset.color === selectedColor) {
+                    swatch.classList.add('active');
+                }
+            });
+        }
+
+        function updatePreview() {
+            const principalColor = document.getElementById('couleur_principale_hex').value;
+            const backgroundColor = document.getElementById('couleur_fond_hex').value;
+            const h1Color = document.getElementById('couleur_texte_h1_hex').value;
+            const bioColor = document.getElementById('couleur_texte_bio_hex').value;
+            const posX = posInputX.value;
+            const posY = posInputY.value;
+
+            document.getElementById('x_value').textContent = posX;
+            document.getElementById('y_value').textContent = posY;
+
+            if (iframe.contentWindow) {
+                const root = iframe.contentWindow.document.documentElement;
+                const iframeImage = iframe.contentWindow.document.querySelector('.profile-image-container img');
+                
+                // 1. Couleurs
+                root.style.setProperty('--main-color', principalColor);
+                root.style.setProperty('--background-color', backgroundColor);
+                
+                // 2. Couleurs de Texte
+                root.style.setProperty('--text-h1-color', h1Color);
+                root.style.setProperty('--text-bio-color', bioColor);
+
+                // 3. Position de la photo
+                if (iframeImage) {
+                    iframeImage.style.objectPosition = `${posX} ${posY}`;
+                }
+            }
+        }
+        // --- LOGIQUE GLISSER-DÉPOSER (INTERACT.JS) ---
+        function initPhotoDraggable() {
+            const imgContainer = iframe.contentWindow.document.querySelector('.profile-image-container');
+            const imgElement = imgContainer ? imgContainer.querySelector('img') : null;
+            
+            if (!imgContainer) {
+                return;
+            }
+            if (!imgElement) {
+                return;
+            }
+
+            let currentX = parseFloat(posInputX.value); 
+            let currentY = parseFloat(posInputY.value); 
+
+            interact(imgContainer).draggable({
+                listeners: {
+                    move (event) {
+                        currentX += (event.dx / imgContainer.offsetWidth) * 100;
+                        currentY += (event.dy / imgContainer.offsetHeight) * 100;
+
+                        currentX = Math.max(0, Math.min(100, currentX));
+                        currentY = Math.max(0, Math.min(100, currentY));
+                        
+                        const newPosX = `${currentX.toFixed(1)}%`;
+                        const newPosY = `${currentY.toFixed(1)}%`;
+
+                        imgElement.style.objectPosition = `${newPosX} ${newPosY}`;
+
+                        posInputX.value = newPosX;
+                        posInputY.value = newPosY;
+                        
+                        document.getElementById('x_value').textContent = newPosX;
+                        document.getElementById('y_value').textContent = newPosY;
+                    }
+                }
+            });
+        }
+
+
+        // Initialisation des éléments de l'éditeur
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lie les événements d'input aux swatches (couleurs)
+            document.querySelectorAll('.color-palette-swatch').forEach(swatch => {
+                swatch.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    const color = this.dataset.color;
+                    
+                    document.getElementById(`couleur_${target}_hex`).value = color;
+                    updateSwatch(target, color);
+                    updatePreview();
+                });
+            });
+
+            // Initialise l'aperçu une fois l'iframe chargée (Lancement du drag-and-drop ici)
+            iframe.onload = function() {
+                updatePreview(); 
+                setTimeout(initPhotoDraggable, 100); 
+            };
+            
+            // Initialisation des swatches au chargement de la page mère
+            const initialPrincipal = document.getElementById('couleur_principale_hex').value;
+            const initialFond = document.getElementById('couleur_fond_hex').value;
+            const initialH1 = document.getElementById('couleur_texte_h1_hex').value;
+            const initialBio = document.getElementById('couleur_texte_bio_hex').value;
+
+            updateSwatch('principale', initialPrincipal);
+            updateSwatch('fond', initialFond);
+            updateSwatch('texte_h1', initialH1);
+            updateSwatch('texte_bio', initialBio);
+        });
+    </script>
+</body>
+</html>

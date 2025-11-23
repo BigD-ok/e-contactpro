@@ -1,0 +1,28 @@
+{
+    "id": 1,
+    "slug": "hicham-ait-ali",
+    "nom": "HICHAM AIT ALI",
+    "titre": "Agent de s\u00e9curit\u00e9",
+    "photo_url": "",
+    "couleur_texte_h1": "#001F3F",
+    "couleur_texte_bio": "#444444",
+    "photo_position_x": "50%",
+    "photo_position_y": "50%",
+    "liens": [
+        {
+            "nom": "Instagram",
+            "url": "https://www.linkedin.com/in/hicham-ait-ali-1578b92a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+            "type": "Instagram"
+        },
+        {
+            "nom": "X",
+            "url": "https://www.linkedin.com/in/riyad-arrar-b16235263/",
+            "type": "X"
+        },
+        {
+            "nom": "LinkedIn",
+            "url": "https://www.linkedin.com/in/hicham-ait-ali-1578b92a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+            "type": "LinkedIn"
+        }
+    ]
+}

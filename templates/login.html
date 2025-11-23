@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Édition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f6f9;
+        }
+        .profil-container {
+            max-width: 380px;
+            width: 100%;
+            padding: 30px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        h1 {
+            color: #007bff;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        form label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #343a40;
+            text-align: left;
+        }
+        form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        .btn.principal {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            background-color: #198754;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="profil-container"> 
+        <h1>Accès Édition</h1>
+        <p style="color: #495057;">Entrez le mot de passe pour modifier le profil.</p>
+        
+        {% if error %}
+            <p style="color: red; font-weight: bold;">{{ error }}</p>
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('login') }}">
+            
+            <label for="password">Mot de Passe</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit" class="btn principal">Se Connecter</button>
+        </form>
+    </div>
+</body>
+</html>

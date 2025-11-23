@@ -1,0 +1,156 @@
+/* static/style.css - Version Professionnelle Finale */
+
+/* --- GLOBAL & FOND --- */
+body {
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+    background-color: #f0f3f5;
+    color: #343a40; 
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* --- CONTENEUR PRINCIPAL (LA CARTE) --- */
+.profil-container {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 30px 25px;
+    background-color: #ffffff; 
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18); /* Ombre plus prononcée */
+    border-radius: 16px; 
+    text-align: center;
+    transition: box-shadow 0.3s ease-in-out; /* Effet de transition */
+}
+.profil-container:hover {
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25); /* Ombre plus forte au survol */
+}
+
+/* --- TYPOGRAPHIE & SÉPARATEURS --- */
+h1 {
+    color: var(--text-h1-color, #1d22a5); 
+    font-size: 1.9em;
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+}
+
+.titre {
+    font-size: 1.05em;
+    color: #6c757d;
+    margin-bottom: 25px;
+    font-weight: 400; 
+}
+
+.bio {
+    font-size: 1.05em;
+    color: #495057;
+    font-style: italic;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 30px auto;
+}
+
+/* --- FORMULAIRE & ÉDITION (Améliore les pages /edition et /live-edit) --- */
+form {
+    text-align: left;
+    display: grid;
+    gap: 15px; 
+}
+
+/* Regroupe les paires courtes */
+.form-group-pair {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 5px; 
+}
+
+/* Styles pour tous les inputs (Uniformisation) */
+input[type="text"], input[type="email"], input[type="url"], input[type="password"], textarea, select {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-sizing: border-box; 
+    font-size: 1em;
+    transition: border-color 0.2s; /* Transition pour le focus */
+}
+input[type="text"]:focus, textarea:focus {
+    border-color: #007bff; /* Bordure bleue au focus */
+    outline: none;
+}
+
+/* --- GESTION DES LIENS DANS L'ÉDITION --- */
+.link-management-section {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.sidebar-link-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+.sidebar-link-item:last-child {
+    border-bottom: none;
+}
+
+/* --- STYLES DES BOUTONS (Modernisation) --- */
+
+.btn {
+    display: block;
+    width: 95%;
+    padding: 14px 10px;
+    margin: 10px auto;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 12px;
+    border: 2px solid transparent; 
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* 1. Boutons "GHOST" (Email et Appel) */
+.btn:not(.principal):not(.social) {
+    color: var(--main-color, #007BFF);
+    background-color: transparent;
+    border-color: var(--main-color, #007BFF);
+}
+.btn:not(.principal):not(.social):hover {
+    color: #ffffff;
+    background-color: var(--main-color, #007BFF);
+    box-shadow: 0 5px 10px rgba(var(--main-color-rgb, 0, 123, 255), 0.3); /* Ombre au survol */
+}
+
+/* 2. Boutons SOCIAUX (Plein et coloré) */
+.btn.social {
+    color: white;
+    background-color: var(--main-color, #007BFF); 
+    border-color: var(--main-color, #007BFF);
+}
+.btn.social:hover {
+    filter: brightness(1.15); /* Effet plus prononcé */
+}
+
+/* 3. Bouton PRINCIPAL (Sauvegarde/Enregistrer Contact) */
+.btn.principal {
+    color: white;
+    background-color: #198754; 
+    border-color: #198754;
+}
+.btn.principal:hover {
+    background-color: #157347;
+}
+
+/* QR Code */
+.qr-code-zone {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px dashed #ced4da;
+    border-radius: 12px;
+}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Édition des Informations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        /* Styles CSS critiques pour cette page spécifique */
+        body {
+            display: flex; 
+            justify-content: center; /* Centre le contenu horizontalement */
+            align-items: flex-start; /* Aligne en haut */
+            min-height: 100vh;
+            padding: 40px 20px; 
+            background-color: #f4f6f9; /* Fond clair */
+            margin: 0;
+            font-family: sans-serif; /* Remplacé par sans-serif pour être sûr */
+        }
+        .profil-container {
+            max-width: 650px; 
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        
+        /* Styles du Formulaire */
+        .form-group-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group-pair label, .form-group-pair input, .form-group-pair select {
+            width: 100%;
+        }
+        .form-group-pair div {
+            margin-bottom: 0 !important;
+        }
+        .form-group-full {
+            margin-bottom: 20px;
+        }
+        .link-management-section {
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            background-color: #ffffff;
+        }
+        .sidebar-link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9em;
+            cursor: move;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        /* Styles pour masquer le champ nom du lien par défaut */
+        #link-name-group {
+            display: none;
+        }
+        /* Style pour placer le bouton d'action finale */
+        .action-button-final {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        /* Style pour l'aperçu de la photo sur la page d'édition */
+        .preview-thumb-container {
+            text-align: center; 
+            margin-bottom: 10px;
+        }
+        .preview-thumb {
+            width: 100px; 
+            height: 100px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 2px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="profil-container"> 
+        <h1>Édition des Informations</h1>
+        <p style="color: #6c757d;">Saisissez ici les données de base de votre profil.</p>
+
+        <div style="margin-bottom: 20px;">
+            <a href="/profiles" style="color: #03a9f4; text-decoration: none; font-weight: bold;">← Retour à la Liste des Profils</a>
+        </div>
+        
+        <form method="POST" action="{{ url_for('edition_profil', slug_profil=profil.slug) }}" enctype="multipart/form-data" id="main-data-form">
+            
+            <div class="form-group-pair">
+                <div>
+                    <label for="nom">Nom Complet</label>
+                    <input type="text" id="nom" name="nom" value="{{ profil.nom }}" required>
+                </div>
+                <div>
+                    <label for="titre">Titre / Poste</label>
+                    <input type="text" id="titre" name="titre" value="{{ profil.titre }}">
+                </div>
+            </div>
+            
+            <div class="form-group-full">
+                <label for="bio">Biographie (350 caractères maximum)</label>
+                <textarea id="bio" name="biographie" maxlength="350">{{ profil.biographie }}</textarea>
+            </div>
+            
+            <div class="form-group-pair">
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ profil.email }}">
+                </div>
+                <div>
+                    <label for="telephone">Téléphone</label>
+                    <input type="text" id="telephone" name="telephone" value="{{ profil.telephone }}">
+                </div>
+            </div>
+
+            <div class="form-group-full">
+                {% if profil.photo_url %}
+                    <div class="preview-thumb-container">
+                        <img src="{{ profil.photo_url }}" alt="Photo de Profil Actuelle" class="preview-thumb">
+                    </div>
+                {% endif %}
+                
+                <label for="photo_file">Télécharger Photo de Profil</label>
+                <input type="file" id="photo_file" name="photo_file" accept="image/*">
+                
+                <p style="margin-top: 5px; font-size: 0.9em; color: #6c757d;">
+                    URL Photo Actuelle : 
+                    {% if profil.photo_url %}
+                        <a href="{{ profil.photo_url }}" target="_blank">{{ profil.photo_url.split('/')[-1] }}</a>
+                    {% else %}
+                        Aucune
+                    {% endif %}
+                </p>
+                <input type="hidden" name="photo_url" value="{{ profil.photo_url }}">
+            </div>
+            
+            <button type="submit" class="btn principal" style="width: 100%; margin-bottom: 20px;" formaction="{{ url_for('edition_profil', slug_profil=profil.slug) }}">
+                Enregistrer
+            </button>
+
+            </form>
+        
+        <hr>
+    
+        <div class="link-management-section">
+            <h3 style="font-size: 1.2em;">Gestion des Liens Externes (Glisser-Déposer pour Trier)</h3>
+            
+            <div id="sortable-list">
+                {% for lien in all_links %}
+                    <div class="sidebar-link-item" data-id="{{ lien.id }}">
+                        
+                        <span style="flex-grow: 1;">
+                            <img src="{{ get_icon(lien.type_lien) }}" alt="{{ lien.type_lien }}" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 5px;"> 
+                            {{ lien.nom }}
+                        </span>
+                        
+                        <div class="link-item-controls">
+                            <form method="POST" action="{{ url_for('gerer_liens') }}" style="display: inline-block;">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="lien_id" value="{{ lien.id }}">
+                                <input type="hidden" name="profil_slug" value="{{ profil.slug }}"> 
+                                <button type="submit" class="delete-btn" title="Supprimer" style="background: none; border: none; color: red; font-weight: bold; cursor: pointer; padding: 0;">&times;</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <form method="POST" action="{{ url_for('gerer_liens') }}" id="form-lien-add" style="margin-top: 15px;">
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="profil_slug" value="{{ profil.slug }}">
+                
+                <label for="type_lien">Type de Réseau/Lien</label>
+                <select id="type_lien" name="type_lien" required onchange="toggleLinkNameEdit()">
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="YouTube">YouTube</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Twitter">Twitter</option>
+                    <option value="Linktree">Linktree</option>
+                    <option value="Autre">Autre (Saisie Manuelle)</option>
+                </select>
+                
+                <div id="link-name-group" style="margin-top: 15px;">
+                    <label for="nom_lien">Nom du lien (Si 'Autre' choisi)</label>
+                    <input type="text" id="nom_lien" name="nom_lien" placeholder="Ex: Mon site / Nom si 'Autre' choisi">
+                </div>
+                
+                <label for="url_lien" style="margin-top: 15px;">URL complète</label>
+                    <input type="url" id="url_lien" name="url_lien" placeholder="Ex: https://instagram.com/..." required>
+                
+                <button type="submit" class="btn principal" style="width: 100%; margin-top: 15px;">+ Ajouter le Lien</button>
+            </form>
+        </div>
+        
+        <div class="action-button-final">
+             <a href="{{ url_for('live_edit', slug_profil=profil.slug) }}" class="btn" style="width: 100%; background-color: #007bff; border-color: #007bff; color: white;">Aller à l'Éditeur de Design</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        // Fonction pour cacher/afficher le champ de nom de lien
+        function toggleLinkNameEdit() {
+            var select = document.getElementById('type_lien');
+            var group = document.getElementById('link-name-group');
+            var nomInput = document.getElementById('nom_lien');
+            
+            if (select.value === 'Autre') {
+                group.style.display = 'block';
+                nomInput.required = true; 
+            } else {
+                group.style.display = 'none';
+                nomInput.required = false;
+                nomInput.value = ''; 
+            }
+        }
+        document.addEventListener('DOMContentLoaded', toggleLinkNameEdit);
+
+
+        // --- LOGIQUE SORTABLEJS POUR LE GLISSER-DÉPOSER ---
+        
+        var sortableList = document.getElementById('sortable-list');
+        var profilSlug = "{{ profil.slug }}"; // Récupère le slug du profil
+        var apiUrl = "{{ url_for('update_link_order') }}"; // L'URL de la nouvelle route
+
+        if (sortableList) {
+            new Sortable(sortableList, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                handle: '.sidebar-link-item', // Permet de cliquer n'importe où sur l'élément pour le déplacer
+                
+                onEnd: function (evt) {
+                    var linkIds = [];
+                    // Parcourt la nouvelle liste pour récupérer les IDs dans l'ordre
+                    sortableList.querySelectorAll('.sidebar-link-item').forEach(item => {
+                        linkIds.push(item.getAttribute('data-id'));
+                    });
+                    
+                    // Envoie la nouvelle liste d'IDs au serveur (requête POST JSON)
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ link_ids: linkIds, profil_slug: profilSlug }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur de serveur: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Ordre des liens mis à jour avec succès.");
+                            // Recharge la page pour afficher l'ordre final
+                            window.location.reload(); 
+                        } else {
+                            alert("Erreur lors de la mise à jour de l'ordre: " + data.error);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Erreur:', error);
+                        alert("Erreur de connexion au serveur lors du tri.");
+                    });
+                },
+            });
+        }
+    </script>
+</body>
+</html>

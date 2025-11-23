@@ -1,0 +1,14 @@
+{
+    "id": 4,
+    "slug": "josu-amede",
+    "nom": "Josu\u00e9 Amede",
+    "titre": "Coordinateur d\u2019\u00e9v\u00e8nement MICE et \u00e9v\u00e8nements priv\u00e9s",
+    "photo_url": "/static/uploads/ef6ba7a1-4a40-48bc-872d-9c02275d7dae_josue.JPG",
+    "liens": [
+        {
+            "nom": "LinkedIn",
+            "url": "https://www.linkedin.com/in/josu%C3%A9-amede-b48b8819b/",
+            "type": "LinkedIn"
+        }
+    ]
+}

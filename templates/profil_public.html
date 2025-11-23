@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profil.nom }} - E-Contact Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+    
+    :root {
+        /* Variables de Design */
+        --main-color: {{ profil.couleur_principale }};
+        --background-color: {{ profil.couleur_fond }};
+        /* Variables de Texte */
+        --text-h1-color: {{ profil.couleur_texte_h1 }};
+        --text-bio-color: {{ profil.couleur_texte_bio }};
+    }
+    body {
+        /* Simplifié: Utilise la variable CSS, qui est injectée par le JS du Live Editor */
+        background-color: var(--background-color) !important;
+        font-family: 'Roboto', sans-serif;
+        padding-top: 20px; 
+        color: #343a40; /* Couleur de texte par défaut */
+    }
+    h1 {
+        /* Utilise la couleur de texte pour le nom/poste */
+        color: var(--text-h1-color) !important;
+        font-weight: 900 !important;
+        font-size: 1.8em;
+    }
+    .titre {
+        /* Utilise la couleur de texte pour le poste */
+        color: var(--text-h1-color) !important;
+        font-weight: 400; /* Normal */
+    }
+    .bio {
+        /* Utilise la couleur de texte pour la bio */
+        color: var(--text-bio-color) !important;
+        font-style: italic;
+        font-size: 1.1em;
+    }
+    /* Les autres styles des boutons restent inchangés et sont corrects */
+</style>
+
+</head>
+<body>
+    
+    <img src="{{ url_for('static', filename='uploads/logo_econtact_pro.jpg') }}" 
+         alt="E-Contact Pro Logo" 
+         class="main-logo">
+    
+    <div class="profil-container">
+        
+        {% if profil.photo_url %}
+        <div class="profile-image-container">
+            <img src="{{ profil.photo_url }}" alt="Photo de Profil">
+        </div>
+        {% else %}
+        <div class="no-photo-text" style="margin-bottom: 20px;">
+        {% endif %}
+        
+        <h1>{{ profil.nom }}</h1>
+        <p class="titre">{{ profil.titre }}</p>
+        
+        {% if not profil.photo_url %}
+        </div> 
+        {% endif %}
+
+        <p class="bio">{{ profil.biographie }}</p>
+        
+        <hr>
+
+        <a href="{{ url_for('generate_vcard', slug_profil=profil.slug) }}" class="btn principal">
+            📥 Enregistrer le Contact
+        </a>
+        <a href="mailto:{{ profil.email }}" class="btn">
+            📧 Contacter par Email
+        </a>
+        <a href="tel:{{ profil.telephone }}" class="btn">
+            📞 Appeler
+        </a>
+
+        <hr>
+
+        {% for lien in profil.liens %}
+        <a href="{{ lien.url }}" class="btn social">
+            <img src="{{ get_icon(lien.type_lien) }}" alt="{{ lien.type_lien }}" class="btn-icon">
+            {{ 'X' if lien.type_lien == 'X' or lien.type_lien == 'Twitter' else lien.nom }}
+        </a>
+        {% endfor %}
+
+        <div class="qr-code-zone">
+            <p>Scanner pour partager ce profil :</p>
+            <img src="{{ url_for('qr_code_generator', slug_profil=profil.slug) }}" alt="QR Code du Profil">
+        </div>
+
+        <div class="promo-message">
+            Découvrez nos solutions Pro. Contact : <a href="mailto:hicham.aitali.pro@gmail.com">hicham.aitali.pro@gmail.com</a>
+        </div>
+
+    </div>
+</body>
+</html>
