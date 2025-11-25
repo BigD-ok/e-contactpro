@@ -92,14 +92,13 @@ class Lien(db.Model):
     nom = db.Column(db.String(100))
     url = db.Column(db.String(500), nullable=False)
     link_order = db.Column(db.Integer, default=0)
-    click_count = db.Column(db.Integer, default=0)  # ✅ Pour analytics
+    click_count = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self):
         return f'<Lien {self.type_lien}>'
 
 
-# ✅ NOUVEAU MODÈLE POUR LES STATISTIQUES
 class Analytics(db.Model):
     __tablename__ = 'analytics'
     
@@ -174,63 +173,45 @@ def index():
     profils = Profil.query.limit(10).all()
     return render_template('index.html', profils=profils)
 
-@app.route('/profil/<slug_profil>/unlock-page')
-def profil_unlock_page(slug_profil):
-    """Page de déverrouillage"""
-    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
-    
-    if not profil.is_protected:
-        return redirect(url_for('profil_public', slug_profil=slug_profil))
-    
-    if session.get(f'profil_{slug_profil}_unlocked'):
-        return redirect(url_for('profil_public', slug_profil=slug_profil))
-    
-    return render_template('profil_unlock.html', slug_profil=slug_profil)
-
-@app.route('/profil/<slug_profil>/unlock', methods=['POST'])
-def unlock_profil(slug_profil):
-    """Déverrouille un profil protégé"""
-    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
-    
-    if not profil.is_protected:
-        return redirect(url_for('profil_public', slug_profil=slug_profil))
-    
-    password = request.form.get('password', '')
-    
-    if check_password_hash(profil.profil_password, password):
-        session[f'profil_{slug_profil}_unlocked'] = True
-        flash('✅ Profil déverrouillé', 'success')
-        return redirect(url_for('profil_public', slug_profil=slug_profil))
-    else:
-        flash('❌ Mot de passe incorrect', 'danger')
-        return render_template('profil_unlock.html', slug_profil=slug_profil)
-
 @app.route('/profil/<slug_profil>')
 def profil_public(slug_profil):
-    """Affiche un profil public"""
+    """Afficher un profil public"""
     profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
     
-    # ✅ Vérifier si protégé
-    if profil.is_protected:
-        if not session.get(f'profil_{slug_profil}_unlocked'):
-            return redirect(url_for('profil_unlock_page', slug_profil=slug_profil))
+    # Vérifier si protégé
+    if profil.is_protected and session.get(f'profil_{profil.id}_unlocked') != True:
+        return redirect(url_for('unlock_profil', slug_profil=slug_profil))
     
-    # ✅ Enregistrer la vue
-    analytics = Analytics(
-        profil_id=profil.id,
-        event_type='view',
-        ip_address=request.remote_addr,
-        user_agent=request.headers.get('User-Agent', '')
-    )
-    db.session.add(analytics)
-    profil.view_count += 1
+    # Enregistrer la vue
+    view_event = Analytics(profil_id=profil.id, event_type='view')
+    db.session.add(view_event)
     db.session.commit()
     
-    # ✅ Envoyer webhook
-    send_webhook(profil, 'profile_viewed')
-    
     liens = Lien.query.filter_by(profil_id=profil.id).order_by(Lien.link_order).all()
-    return render_template('profil_public.html', profil=profil, liens=liens, template=profil.template)
+    template_name = f'profil_templates/{profil.template}.html'
+    
+    return render_template('profil_public.html', 
+                         profil=profil, 
+                         liens=liens,
+                         template_name=template_name)
+
+@app.route('/profil/<slug_profil>/unlock', methods=['GET', 'POST'])
+def unlock_profil(slug_profil):
+    """Déverrouiller un profil protégé"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    if not profil.is_protected:
+        return redirect(url_for('profil_public', slug_profil=slug_profil))
+    
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if profil.profil_password and check_password_hash(profil.profil_password, password):
+            session[f'profil_{profil.id}_unlocked'] = True
+            return redirect(url_for('profil_public', slug_profil=slug_profil))
+        else:
+            flash('❌ Mot de passe incorrect', 'danger')
+    
+    return render_template('profil_unlock.html', slug_profil=slug_profil)
 
 @app.route('/click/<int:lien_id>')
 def track_click(lien_id):
@@ -249,7 +230,7 @@ def track_click(lien_id):
     lien.click_count += 1
     db.session.commit()
     
-    # ✅ Envoyer webhook
+    # Envoyer webhook
     send_webhook(lien.profil, 'link_clicked', {'lien_id': lien_id, 'url': lien.url})
     
     return redirect(lien.url)
@@ -284,7 +265,7 @@ def vcard(slug_profil):
     
     vcard = vobject.vCard()
     vcard.add('fn')
-    vcard.fn.value = profil.nom
+    vcard.fn.value = profil.nom or 'Contact'
     
     if profil.titre:
         vcard.add('title')
@@ -302,7 +283,10 @@ def vcard(slug_profil):
     
     if profil.biographie:
         vcard.add('note')
-        vcard.note.value = profil.biographie
+        vcard.note.value = profil.biographie[:500]
+    
+    vcard.add('url')
+    vcard.url.value = request.url_root.rstrip('/') + url_for('profil_public', slug_profil=profil.slug)
     
     response_data = vcard.serialize()
     

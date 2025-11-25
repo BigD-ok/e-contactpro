@@ -1,0 +1,104 @@
+<div style="background: linear-gradient(135deg, var(--color-primary) 0%, #764ba2 100%); min-height: 100vh; padding: 40px 20px; color: white;">
+    <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+        
+        <!-- Photo -->
+        <div style="width: 180px; height: 180px; margin: 0 auto 30px; border-radius: 50%; overflow: hidden; background: white; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); border: 6px solid white; animation: float 3s ease-in-out infinite;">
+            {% if profil.photo_url %}
+                <img src="{{ profil.photo_url }}" alt="{{ profil.nom }}" style="width: 100%; height: 100%; object-fit: cover; object-position: var(--photo-position-x) var(--photo-position-y);">
+            {% else %}
+                <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 4em; color: #667eea;">👤</div>
+            {% endif %}
+        </div>
+
+        <style>
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+        </style>
+
+        <!-- Nom -->
+        <h1 style="font-family: 'Poppins', sans-serif; font-size: 2.2em; font-weight: 800; color: white; margin-bottom: 10px; letter-spacing: -0.5px; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+            {{ profil.nom }}
+        </h1>
+
+        <!-- Titre -->
+        {% if profil.titre %}
+        <div style="font-size: 1.1em; color: rgba(255, 255, 255, 0.9); font-weight: 500; margin-bottom: 20px;">
+            {{ profil.titre }}
+        </div>
+        {% endif %}
+
+        <!-- Bio -->
+        {% if profil.biographie %}
+        <div style="font-size: 0.95em; line-height: 1.6; color: rgba(255, 255, 255, 0.85); margin-bottom: 30px; max-width: 90%; margin-left: auto; margin-right: auto;">
+            {{ profil.biographie }}
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px;">
+            {% if profil.email %}
+            <a href="mailto:{{ profil.email }}" style="padding: 14px 16px; background: white; color: #667eea; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9em; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease; min-height: 50px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);">
+                📧 Email
+            </a>
+            {% endif %}
+
+            {% if profil.telephone %}
+            <a href="tel:{{ profil.telephone }}" style="padding: 14px 16px; background: white; color: #667eea; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9em; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease; min-height: 50px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);">
+                📞 Appeler
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Liens -->
+        {% if liens %}
+        <div style="margin: 30px 0;">
+            <div style="font-family: 'Poppins', sans-serif; font-size: 1em; font-weight: 700; color: white; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+                🔗 Mes Liens
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                {% for lien in liens %}
+                <a href="{{ url_for('track_click', lien_id=lien.id) }}" style="display: flex; align-items: center; padding: 16px 20px; background: rgba(255, 255, 255, 0.15); border-radius: 12px; text-decoration: none; color: white; transition: all 0.3s ease; border: 2px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);">
+                    <span style="font-size: 1.4em; margin-right: 15px; display: flex; align-items: center; justify-content: center; width: 32px;">
+                        {% if lien.type_lien == 'LinkedIn' %}🔵
+                        {% elif lien.type_lien == 'Facebook' %}📘
+                        {% elif lien.type_lien == 'Twitter' %}🐦
+                        {% elif lien.type_lien == 'Instagram' %}📷
+                        {% elif lien.type_lien == 'GitHub' %}💻
+                        {% elif lien.type_lien == 'YouTube' %}📺
+                        {% elif lien.type_lien == 'WhatsApp' %}💬
+                        {% else %}🔗
+                        {% endif %}
+                    </span>
+                    <div style="flex: 1;">
+                        <span style="display: block; font-weight: 600; color: white; font-size: 0.95em; margin-bottom: 4px;">
+                            {{ lien.nom or lien.type_lien }}
+                        </span>
+                        <span style="display: block; font-size: 0.85em; color: rgba(255, 255, 255, 0.7); word-break: break-all;">
+                            {{ lien.url|truncate(40, True) }}
+                        </span>
+                    </div>
+                    <span style="color: white; font-size: 1.2em; margin-left: 10px; opacity: 0.7;">→</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- QR Code -->
+        <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid rgba(255, 255, 255, 0.2);">
+            <div style="font-family: 'Poppins', sans-serif; font-size: 0.9em; font-weight: 600; color: white; margin-bottom: 15px; opacity: 0.9;">
+                📱 Partager ce Profil
+            </div>
+            <div style="width: 150px; height: 150px; margin: 0 auto; padding: 10px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);">
+                <img src="{{ url_for('qr_code_generator', slug_profil=profil.slug) }}" alt="QR Code" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: auto; text-align: center; padding-top: 30px; color: rgba(255, 255, 255, 0.7); font-size: 0.85em;">
+            <p>Créé avec ❤️ par <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-weight: 600;">E-Contact Pro</a></p>
+        </div>
+    </div>
+</div>

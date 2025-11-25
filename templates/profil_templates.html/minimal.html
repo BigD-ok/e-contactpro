@@ -1,0 +1,79 @@
+<div style="background: var(--color-background); min-height: 100vh; padding: 60px 20px; color: var(--color-text-bio);">
+    <div style="max-width: 500px; margin: 0 auto;">
+        
+        <!-- Photo -->
+        <div style="width: 120px; height: 120px; margin: 0 auto 30px; border-radius: 50%; overflow: hidden; background: var(--color-primary); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);">
+            {% if profil.photo_url %}
+                <img src="{{ profil.photo_url }}" alt="{{ profil.nom }}" style="width: 100%; height: 100%; object-fit: cover; object-position: var(--photo-position-x) var(--photo-position-y);">
+            {% else %}
+                <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 3em; color: white;">👤</div>
+            {% endif %}
+        </div>
+
+        <!-- Nom -->
+        <h1 style="font-family: 'Poppins', sans-serif; font-size: 1.8em; font-weight: 700; color: var(--color-text-h1); margin-bottom: 8px; letter-spacing: -0.5px; text-align: center;">
+            {{ profil.nom }}
+        </h1>
+
+        <!-- Titre -->
+        {% if profil.titre %}
+        <div style="font-size: 0.95em; color: var(--color-text-bio); font-weight: 500; margin-bottom: 25px; text-align: center; opacity: 0.8;">
+            {{ profil.titre }}
+        </div>
+        {% endif %}
+
+        <!-- Bio -->
+        {% if profil.biographie %}
+        <div style="font-size: 0.9em; line-height: 1.6; color: var(--color-text-bio); margin-bottom: 35px; text-align: center; opacity: 0.85;">
+            {{ profil.biographie }}
+        </div>
+        {% endif %}
+
+        <!-- Divider -->
+        <div style="height: 1px; background: rgba(0, 0, 0, 0.1); margin-bottom: 35px;"></div>
+
+        <!-- Liens -->
+        {% if liens %}
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            {% for lien in liens %}
+            <a href="{{ url_for('track_click', lien_id=lien.id) }}" style="display: flex; align-items: center; justify-content: center; padding: 14px 20px; background: transparent; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 50px; text-decoration: none; color: var(--color-text-bio); transition: all 0.3s ease; gap: 8px; font-weight: 500; font-size: 0.95em;">
+                <span>
+                    {% if lien.type_lien == 'LinkedIn' %}🔵
+                    {% elif lien.type_lien == 'Facebook' %}📘
+                    {% elif lien.type_lien == 'Twitter' %}🐦
+                    {% elif lien.type_lien == 'Instagram' %}📷
+                    {% elif lien.type_lien == 'GitHub' %}💻
+                    {% elif lien.type_lien == 'YouTube' %}📺
+                    {% elif lien.type_lien == 'WhatsApp' %}💬
+                    {% else %}🔗
+                    {% endif %}
+                </span>
+                {{ lien.nom or lien.type_lien }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Contact -->
+        <div style="margin-top: 35px; display: flex; flex-direction: column; gap: 10px;">
+            {% if profil.email %}
+            <a href="mailto:{{ profil.email }}" style="display: flex; align-items: center; justify-content: center; padding: 14px 20px; background: var(--color-primary); color: white; border: none; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; gap: 8px; font-weight: 500; font-size: 0.95em;">
+                📧 Email
+            </a>
+            {% endif %}
+
+            {% if profil.telephone %}
+            <a href="tel:{{ profil.telephone }}" style="display: flex; align-items: center; justify-content: center; padding: 14px 20px; background: var(--color-primary); color: white; border: none; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; gap: 8px; font-weight: 500; font-size: 0.95em;">
+                📞 Appeler
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- QR Code -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 35px; border-top: 1px solid rgba(0, 0, 0, 0.1);">
+            <div style="width: 120px; height: 120px; margin: 0 auto; padding: 8px; background: white; border-radius: 8px;">
+                <img src="{{ url_for('qr_code_generator', slug_profil=profil.slug) }}" alt="QR Code" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
