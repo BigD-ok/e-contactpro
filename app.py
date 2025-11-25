@@ -745,9 +745,18 @@ def server_error(error):
 # ============================================
 # INITIALISATION
 # ============================================
+# ...existing code...
+
+# ============================================
+# INITIALISATION
+# ============================================
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        # ✅ FORCER LA CRÉATION DE TOUTES LES TABLES
+        print("🔄 Initialisation de la base de données...")
+        db.drop_all()  # ⚠️ SUPPRIMER TOUT
+        db.create_all()  # Créer les tables avec les bonnes colonnes
+        print("✅ Base de données initialisée avec succès!")
     
     debug_mode = os.environ.get('FLASK_ENV') == 'development'
     app.run(debug=debug_mode, host='0.0.0.0', port=5000)
