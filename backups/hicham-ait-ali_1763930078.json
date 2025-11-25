@@ -1,0 +1,24 @@
+{
+    "id": 1,
+    "slug": "hicham-ait-ali",
+    "nom": "HICHAM AIT ALI",
+    "titre": "Agent de sécurité",
+    "biographie": "Suivez moi ici : \r\n-TWITCH : https://twitch.tv/bigdadique 😉\r\n-INSTAGRAM : https://www.instagram.com/bigdadique/\r\n-TIKTOK: https://www.tiktok.com/@bigdadiquee\r\n\r\nContact Pro : bigdadique.pro@gmail.com\r\n\r\n",
+    "email": "hicham.aitali.pro@gmail.com",
+    "telephone": "+33621292937",
+    "photo_url": "/static/uploads/86bb8ffed4ae4a759fbc113c360cc90a_avtr-0-1000-0-1000-crop.jpg",
+    "couleur_principale": "#001F3F",
+    "couleur_fond": "#E9ECEF",
+    "couleur_texte_h1": "#001F3F",
+    "couleur_texte_bio": "#444444",
+    "photo_position_x": "50%",
+    "photo_position_y": "50%",
+    "liens": [
+        {
+            "nom": "LinkedIn",
+            "url": "https://www.linkedin.com/in/hicham-ait-ali-1578b92a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+            "type": "LinkedIn",
+            "order": 0
+        }
+    ]
+}

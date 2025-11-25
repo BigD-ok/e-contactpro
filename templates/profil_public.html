@@ -3,103 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ profil.titre or profil.nom }} - {{ profil.biographie[:100] if profil.biographie else 'Profil E-Contact Pro' }}">
+    <meta property="og:title" content="{{ profil.nom }}">
+    <meta property="og:description" content="{{ profil.titre or '' }}">
+    <meta property="og:type" content="profile">
+    
     <title>{{ profil.nom }} - E-Contact Pro</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
-    
-    :root {
-        /* Variables de Design */
-        --main-color: {{ profil.couleur_principale }};
-        --background-color: {{ profil.couleur_fond }};
-        /* Variables de Texte */
-        --text-h1-color: {{ profil.couleur_texte_h1 }};
-        --text-bio-color: {{ profil.couleur_texte_bio }};
-    }
-    body {
-        /* Simplifié: Utilise la variable CSS, qui est injectée par le JS du Live Editor */
-        background-color: var(--background-color) !important;
-        font-family: 'Roboto', sans-serif;
-        padding-top: 20px; 
-        color: #343a40; /* Couleur de texte par défaut */
-    }
-    h1 {
-        /* Utilise la couleur de texte pour le nom/poste */
-        color: var(--text-h1-color) !important;
-        font-weight: 900 !important;
-        font-size: 1.8em;
-    }
-    .titre {
-        /* Utilise la couleur de texte pour le poste */
-        color: var(--text-h1-color) !important;
-        font-weight: 400; /* Normal */
-    }
-    .bio {
-        /* Utilise la couleur de texte pour la bio */
-        color: var(--text-bio-color) !important;
-        font-style: italic;
-        font-size: 1.1em;
-    }
-    /* Les autres styles des boutons restent inchangés et sont corrects */
-</style>
+        :root {
+            --color-primary: {{ profil.couleur_principale }};
+            --color-background: {{ profil.couleur_fond }};
+            --color-text-h1: {{ profil.couleur_texte_h1 }};
+            --color-text-bio: {{ profil.couleur_texte_bio }};
+            --photo-position-x: {{ profil.photo_position_x }}%;
+            --photo-position-y: {{ profil.photo_position_y }}%;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-background);
+            color: var(--color-text-bio);
+            min-height: 100vh;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-photo {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 123, 255, 0.7) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border: 4px solid white;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: var(--photo-position-x) var(--photo-position-y);
+        }
+
+        .profile-photo-empty {
+            font-size: 4em;
+            opacity: 0.8;
+        }
+
+        .profile-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2em;
+            font-weight: 800;
+            color: var(--color-text-h1);
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .profile-title {
+            font-size: 1.1em;
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .profile-bio {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: var(--color-text-bio);
+            margin-bottom: 30px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .action-btn {
+            padding: 14px 16px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 50px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+            opacity: 0.9;
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .action-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .links-section {
+            margin: 30px 0;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .links-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            color: var(--color-text-h1);
+            margin-bottom: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .links-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--color-text-bio);
+            transition: all 0.3s ease;
+            border: 2px solid #e8eef5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .social-link:hover {
+            border-color: var(--color-primary);
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.05) 0%, rgba(0, 123, 255, 0.02) 100%);
+            transform: translateX(4px);
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.15);
+        }
+
+        .social-icon {
+            font-size: 1.4em;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+        }
+
+        .social-info {
+            flex: 1;
+        }
+
+        .social-name {
+            display: block;
+            font-weight: 600;
+            color: var(--color-text-h1);
+            font-size: 0.95em;
+            margin-bottom: 4px;
+        }
+
+        .social-url {
+            display: block;
+            font-size: 0.85em;
+            color: var(--color-text-bio);
+            opacity: 0.7;
+            word-break: break-all;
+        }
+
+        .social-arrow {
+            color: var(--color-primary);
+            font-size: 1.2em;
+            margin-left: 10px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover .social-arrow {
+            opacity: 1;
+            transform: translateX(4px);
+        }
+
+        .qr-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out 0.6s both;
+        }
+
+        .qr-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--color-text-h1);
+            margin-bottom: 15px;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 30px;
+            color: var(--color-text-bio);
+            font-size: 0.85em;
+            opacity: 0.6;
+        }
+
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer a:hover {
+            opacity: 0.8;
+        }
+
+        .download-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .download-btn {
+            padding: 8px 14px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .download-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 30px 15px;
+            }
+
+            .profile-name {
+                font-size: 1.6em;
+            }
+
+            .profile-photo {
+                width: 160px;
+                height: 160px;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .qr-code {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
 </head>
 <body>
-    
-    <img src="{{ url_for('static', filename='uploads/logo_econtact_pro.jpg') }}" 
-         alt="E-Contact Pro Logo" 
-         class="main-logo">
-    
-    <div class="profil-container">
-        
-        {% if profil.photo_url %}
-        <div class="profile-image-container">
-            <img src="{{ profil.photo_url }}" alt="Photo de Profil">
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-photo">
+                {% if profil.photo_url %}
+                    <img src="{{ profil.photo_url }}" alt="{{ profil.nom }}">
+                {% else %}
+                    <div class="profile-photo-empty">👤</div>
+                {% endif %}
+            </div>
+
+            <h1 class="profile-name">{{ profil.nom }}</h1>
+            
+            {% if profil.titre %}
+            <div class="profile-title">{{ profil.titre }}</div>
+            {% endif %}
+
+            {% if profil.biographie %}
+            <div class="profile-bio">{{ profil.biographie }}</div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="no-photo-text" style="margin-bottom: 20px;">
+
+        <!-- Actions principales -->
+        <div class="actions-grid">
+            {% if profil.email %}
+            <a href="mailto:{{ profil.email }}" class="action-btn">
+                📧 Email
+            </a>
+            {% endif %}
+
+            {% if profil.telephone %}
+            <a href="tel:{{ profil.telephone }}" class="action-btn">
+                📞 Appeler
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Liens sociaux -->
+        {% if liens %}
+        <div class="links-section">
+            <div class="links-title">🔗 Mes Liens</div>
+            <div class="links-grid">
+                {% for lien in liens %}
+                <a href="{{ lien.url }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                    <span class="social-icon">
+                        {% if lien.type_lien == 'LinkedIn' %}🔵
+                        {% elif lien.type_lien == 'Facebook' %}📘
+                        {% elif lien.type_lien == 'Twitter' %}🐦
+                        {% elif lien.type_lien == 'Instagram' %}📷
+                        {% elif lien.type_lien == 'GitHub' %}💻
+                        {% elif lien.type_lien == 'YouTube' %}📺
+                        {% elif lien.type_lien == 'TikTok' %}🎵
+                        {% elif lien.type_lien == 'Twitch' %}🎮
+                        {% elif lien.type_lien == 'Snapchat' %}👻
+                        {% elif lien.type_lien == 'Pinterest' %}📌
+                        {% elif lien.type_lien == 'WhatsApp' %}💬
+                        {% elif lien.type_lien == 'Telegram' %}✈️
+                        {% elif lien.type_lien == 'Discord' %}🎙️
+                        {% elif lien.type_lien == 'Website' %}🌐
+                        {% else %}🔗
+                        {% endif %}
+                    </span>
+                    <div class="social-info">
+                        <span class="social-name">{{ lien.nom or lien.type_lien }}</span>
+                        <span class="social-url">{{ lien.url|truncate(40, True) }}</span>
+                    </div>
+                    <span class="social-arrow">→</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
         {% endif %}
-        
-        <h1>{{ profil.nom }}</h1>
-        <p class="titre">{{ profil.titre }}</p>
-        
-        {% if not profil.photo_url %}
-        </div> 
-        {% endif %}
 
-        <p class="bio">{{ profil.biographie }}</p>
-        
-        <hr>
-
-        <a href="{{ url_for('generate_vcard', slug_profil=profil.slug) }}" class="btn principal">
-            📥 Enregistrer le Contact
-        </a>
-        <a href="mailto:{{ profil.email }}" class="btn">
-            📧 Contacter par Email
-        </a>
-        <a href="tel:{{ profil.telephone }}" class="btn">
-            📞 Appeler
-        </a>
-
-        <hr>
-
-        {% for lien in profil.liens %}
-        <a href="{{ lien.url }}" class="btn social">
-            <img src="{{ get_icon(lien.type_lien) }}" alt="{{ lien.type_lien }}" class="btn-icon">
-            {{ 'X' if lien.type_lien == 'X' or lien.type_lien == 'Twitter' else lien.nom }}
-        </a>
-        {% endfor %}
-
-        <div class="qr-code-zone">
-            <p>Scanner pour partager ce profil :</p>
-            <img src="{{ url_for('qr_code_generator', slug_profil=profil.slug) }}" alt="QR Code du Profil">
+        <!-- QR Code -->
+        <div class="qr-section">
+            <div class="qr-title">📱 Partager ce Profil</div>
+            <div class="qr-code">
+                <img src="{{ url_for('qr_code_generator', slug_profil=profil.slug) }}" alt="QR Code">
+            </div>
+            <div class="download-section">
+                <a href="{{ url_for('vcard', slug_profil=profil.slug) }}" class="download-btn">
+                    💾 vCard
+                </a>
+            </div>
         </div>
 
-        <div class="promo-message">
-            Découvrez nos solutions Pro. Contact : <a href="mailto:hicham.aitali.pro@gmail.com">hicham.aitali.pro@gmail.com</a>
+        <!-- Footer -->
+        <div class="footer">
+            <p>Créé avec ❤️ par <a href="{{ url_for('index') }}">E-Contact Pro</a></p>
         </div>
-
     </div>
 </body>
 </html>

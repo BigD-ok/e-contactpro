@@ -1,261 +1,769 @@
-# app.py
-
-from flask import Flask, render_template, request, redirect, url_for, send_file, session, make_response, jsonify
-import qrcode
-import io
 import os
-import json
+import re
+import qrcode
+from io import BytesIO
+import base64
+from datetime import datetime, timedelta
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-import uuid
-import re 
-from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey, desc, asc
-from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy.ext.declarative import declarative_base
+from functools import wraps
+import vobject
 
-# --- Configuration des Fichiers et Extensions Autorisées ---
-UPLOAD_FOLDER = 'static/uploads'
-BACKUP_FOLDER = 'backups' 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'svg'}
-
-# --- Configuration de la Base de Données ---
-engine = create_engine('sqlite:///profil.db')
-Base = declarative_base()
-Session = sessionmaker(bind=engine)
-session_db = Session() 
-
-# --- Modèles de Base de Données (RÉTABLIS AU MODÈLE FINAL) ---
-
-class Profil(Base):
-    __tablename__ = 'profils'
-    id = Column(Integer, primary_key=True) 
-    slug = Column(String(50), unique=True, default='mon-profil')
-    nom = Column(String(100), default='')
-    titre = Column(String(100), default='')
-    biographie = Column(Text, default='')
-    email = Column(String(100), default='')
-    telephone = Column(String(50), default='')
-    photo_url = Column(String(255), default='')
-    couleur_principale = Column(String(7), default='#001F3F')
-    couleur_fond = Column(String(7), default='#E9ECEF')
-    couleur_texte_h1 = Column(String(7), default='#001F3F')
-    couleur_texte_bio = Column(String(7), default='#444444')
-    photo_position_x = Column(String(5), default='50%')
-    photo_position_y = Column(String(5), default='50%')
-    
-    liens = relationship("Lien", backref="profil", cascade="all, delete-orphan", order_by="Lien.link_order") 
-
-    def __repr__(self):
-        return f"<Profil(nom='{self.nom}', slug='{self.slug}')>"
-
-class Lien(Base):
-    __tablename__ = 'liens'
-
-    id = Column(Integer, primary_key=True)
-    type_lien = Column(String(50), nullable=False)
-    nom = Column(String(50), nullable=False)
-    url = Column(String(255), nullable=False)
-    link_order = Column(Integer, default=0)
-    
-    profil_id = Column(Integer, ForeignKey('profils.id'))
-    
-    def __repr__(self):
-        return f"<Lien(nom='{self.nom}', url='{self.url}')>"
-
-# Crée les tables dans la base de données si elles n'existent pas
-Base.metadata.create_all(engine)
-
-# Crée le dossier de backup s'il n'existe pas
-if not os.path.exists(BACKUP_FOLDER):
-    os.makedirs(BACKUP_FOLDER)
-
-# --- Initialisation de l'Application Flask ---
+# ============================================
+# CONFIGURATION FLASK
+# ============================================
 app = Flask(__name__)
-app.secret_key = os.urandom(24) 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['BACKUP_FOLDER'] = BACKUP_FOLDER
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///profils.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-# --- Fonctions Utiles (Slugs, Backup, Icônes) ---
+# ✅ SÉCURITÉ: Mot de passe admin
+ADMIN_PASSWORD_HASH = os.environ.get('ADMIN_PASSWORD_HASH') or generate_password_hash('admin123')
+
+# Créer dossier uploads
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+db = SQLAlchemy(app)
+
+# ============================================
+# MODÈLES
+# ============================================
+class Profil(db.Model):
+    __tablename__ = 'profils'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    nom = db.Column(db.String(150), nullable=False)
+    titre = db.Column(db.String(100))
+    biographie = db.Column(db.Text)
+    email = db.Column(db.String(120))
+    telephone = db.Column(db.String(20))
+    photo_url = db.Column(db.String(200))
+    
+    # Positions photo (0-100)
+    photo_position_x = db.Column(db.Integer, default=50)
+    photo_position_y = db.Column(db.Integer, default=50)
+    
+    # Couleurs personnalisables
+    couleur_principale = db.Column(db.String(7), default='#007bff')
+    couleur_fond = db.Column(db.String(7), default='#ffffff')
+    couleur_texte_h1 = db.Column(db.String(7), default='#000000')
+    couleur_texte_bio = db.Column(db.String(7), default='#666666')
+    
+    # ✅ PARAMÈTRES AVANCÉS
+    theme = db.Column(db.String(20), default='light')  # light / dark
+    animations = db.Column(db.Boolean, default=True)
+    layout = db.Column(db.String(20), default='vertical')  # vertical / horizontal
+    template = db.Column(db.String(50), default='modern')  # modern / classic / minimal / gradient / glassmorphism
+    
+    # ✅ SÉCURITÉ
+    is_protected = db.Column(db.Boolean, default=False)
+    profil_password = db.Column(db.String(255), nullable=True)
+    
+    # ✅ ANALYTICS
+    view_count = db.Column(db.Integer, default=0)
+    
+    # ✅ WEBHOOKS
+    webhook_url = db.Column(db.String(500), nullable=True)
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relations
+    liens = db.relationship('Lien', backref='profil', lazy=True, cascade='all, delete-orphan')
+    analytics = db.relationship('Analytics', backref='profil', lazy=True, cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<Profil {self.nom}>'
+
+
+class Lien(db.Model):
+    __tablename__ = 'liens'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    profil_id = db.Column(db.Integer, db.ForeignKey('profils.id'), nullable=False)
+    type_lien = db.Column(db.String(50), nullable=False)
+    nom = db.Column(db.String(100))
+    url = db.Column(db.String(500), nullable=False)
+    link_order = db.Column(db.Integer, default=0)
+    click_count = db.Column(db.Integer, default=0)  # ✅ Pour analytics
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<Lien {self.type_lien}>'
+
+
+# ✅ NOUVEAU MODÈLE POUR LES STATISTIQUES
+class Analytics(db.Model):
+    __tablename__ = 'analytics'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    profil_id = db.Column(db.Integer, db.ForeignKey('profils.id'), nullable=False)
+    lien_id = db.Column(db.Integer, db.ForeignKey('liens.id'), nullable=True)
+    event_type = db.Column(db.String(50))  # view, click
+    ip_address = db.Column(db.String(50))
+    user_agent = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<Analytics {self.event_type}>'
+
+# ============================================
+# FONCTIONS UTILITAIRES
+# ============================================
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-def create_backup(profil):
-    backup_data = {
-        'id': profil.id,
-        'slug': profil.slug,
-        'nom': profil.nom,
-        'titre': profil.titre,
-        'photo_url': profil.photo_url,
-        'couleur_texte_h1': profil.couleur_texte_h1,
-        'couleur_texte_bio': profil.couleur_texte_bio,
-        'photo_position_x': profil.photo_position_x,
-        'photo_position_y': profil.photo_position_y,
-        'liens': [{'nom': l.nom, 'url': l.url, 'type': l.type_lien} for l in profil.liens]
-    }
+def validate_hex_color(color):
+    if not color or not isinstance(color, str):
+        return False
+    return bool(re.match(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$', color))
+
+def validate_email(email):
+    if not email:
+        return True
+    return bool(re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email))
+
+def validate_phone(phone):
+    if not phone:
+        return True
+    return bool(re.match(r'^\+?1?\d{9,15}$', phone.replace(' ', '').replace('-', '')))
+
+def generate_slug(name):
+    slug = name.lower()
+    slug = re.sub(r'[^a-z0-9]+', '-', slug).strip('-')
+    return slug
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def send_webhook(profil, event_type, data=None):
+    """Envoie un webhook quand un événement se produit"""
+    if not profil.webhook_url:
+        return
+    
     try:
-        timestamp = os.path.getmtime(os.path.join(app.root_path, 'profil.db'))
-    except FileNotFoundError:
-        timestamp = 0 
-        
-    backup_filename = f"{profil.slug}_{timestamp}.json"
-    backup_path = os.path.join(app.config['BACKUP_FOLDER'], backup_filename)
+        import requests
+        payload = {
+            'event': event_type,
+            'profil_slug': profil.slug,
+            'timestamp': datetime.utcnow().isoformat(),
+            'data': data or {}
+        }
+        requests.post(profil.webhook_url, json=payload, timeout=5)
+    except Exception as e:
+        app.logger.error(f'Webhook error: {str(e)}')
 
-    with open(backup_path, 'w') as f:
-        json.dump(backup_data, f, indent=4)
+# ============================================
+# ROUTES PUBLIQUES
+# ============================================
+@app.route('/')
+def index():
+    """Page d'accueil"""
+    profils = Profil.query.limit(10).all()
+    return render_template('index.html', profils=profils)
 
-def slugify(text):
-    if not text:
-        return 'default-' + uuid.uuid4().hex[:8]
-    text = text.lower()
-    text = re.sub(r'[^a-z0-9\s-]', '', text)
-    text = re.sub(r'[\s]+', '-', text)
-    return text
-
-def get_or_create_profil(slug_name):
-    profil = session_db.query(Profil).filter_by(slug=slug_name).first()
+@app.route('/profil/<slug_profil>/unlock-page')
+def profil_unlock_page(slug_profil):
+    """Page de déverrouillage"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
     
-    if not profil:
-        profil = Profil(
-            slug=slug_name,
-            nom="",
-            titre="",
-            biographie="",
-            email="",
-            telephone="",
-            photo_url='',
-            couleur_principale='#001F3F',
-            couleur_fond='#E9ECEF',
-            couleur_texte_h1='#001F3F',
-            couleur_texte_bio='#444444'
-        )
-        session_db.add(profil)
-        session_db.commit()
-    return profil
+    if not profil.is_protected:
+        return redirect(url_for('profil_public', slug_profil=slug_profil))
+    
+    if session.get(f'profil_{slug_profil}_unlocked'):
+        return redirect(url_for('profil_public', slug_profil=slug_profil))
+    
+    return render_template('profil_unlock.html', slug_profil=slug_profil)
 
-def get_icon(link_type):
-    icons = {
-        'LinkedIn': 'icons/linkedin.png',
-        'YouTube': 'icons/youtube.png',
-        'X': 'icons/x.png',
-        'Twitter': 'icons/x.png', 
-        'Instagram': 'icons/instagram.png',
-        'Linktree': 'icons/linktree.png',
-        'Autre': 'icons/globe.png'
-    }
-    path = icons.get(link_type, icons['Autre'])
-    return url_for('static', filename=path) 
-app.jinja_env.globals.update(get_icon=get_icon) 
+@app.route('/profil/<slug_profil>/unlock', methods=['POST'])
+def unlock_profil(slug_profil):
+    """Déverrouille un profil protégé"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    if not profil.is_protected:
+        return redirect(url_for('profil_public', slug_profil=slug_profil))
+    
+    password = request.form.get('password', '')
+    
+    if check_password_hash(profil.profil_password, password):
+        session[f'profil_{slug_profil}_unlocked'] = True
+        flash('✅ Profil déverrouillé', 'success')
+        return redirect(url_for('profil_public', slug_profil=slug_profil))
+    else:
+        flash('❌ Mot de passe incorrect', 'danger')
+        return render_template('profil_unlock.html', slug_profil=slug_profil)
 
-# --- Routes Flask (RÉTABLIES) ---
+@app.route('/profil/<slug_profil>')
+def profil_public(slug_profil):
+    """Affiche un profil public"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    # ✅ Vérifier si protégé
+    if profil.is_protected:
+        if not session.get(f'profil_{slug_profil}_unlocked'):
+            return redirect(url_for('profil_unlock_page', slug_profil=slug_profil))
+    
+    # ✅ Enregistrer la vue
+    analytics = Analytics(
+        profil_id=profil.id,
+        event_type='view',
+        ip_address=request.remote_addr,
+        user_agent=request.headers.get('User-Agent', '')
+    )
+    db.session.add(analytics)
+    profil.view_count += 1
+    db.session.commit()
+    
+    # ✅ Envoyer webhook
+    send_webhook(profil, 'profile_viewed')
+    
+    liens = Lien.query.filter_by(profil_id=profil.id).order_by(Lien.link_order).all()
+    return render_template('profil_public.html', profil=profil, liens=liens, template=profil.template)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    """Page de connexion pour accéder à l'édition."""
+@app.route('/click/<int:lien_id>')
+def track_click(lien_id):
+    """Enregistre un clic et redirige"""
+    lien = Lien.query.get_or_404(lien_id)
+    
+    # Enregistrer le clic
+    analytics = Analytics(
+        profil_id=lien.profil_id,
+        lien_id=lien_id,
+        event_type='click',
+        ip_address=request.remote_addr,
+        user_agent=request.headers.get('User-Agent', '')
+    )
+    db.session.add(analytics)
+    lien.click_count += 1
+    db.session.commit()
+    
+    # ✅ Envoyer webhook
+    send_webhook(lien.profil, 'link_clicked', {'lien_id': lien_id, 'url': lien.url})
+    
+    return redirect(lien.url)
+
+@app.route('/qr/<slug_profil>')
+def qr_code_generator(slug_profil):
+    """Génère un QR code"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    profile_url = request.url_root.rstrip('/') + url_for('profil_public', slug_profil=profil.slug)
+    
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(profile_url)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color='black', back_color='white')
+    img_io = BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+    
+    return send_file(img_io, mimetype='image/png')
+
+@app.route('/vcard/<slug_profil>')
+def vcard(slug_profil):
+    """Télécharge la vCard"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    vcard = vobject.vCard()
+    vcard.add('fn')
+    vcard.fn.value = profil.nom
+    
+    if profil.titre:
+        vcard.add('title')
+        vcard.title.value = profil.titre
+    
+    if profil.email:
+        vcard.add('email')
+        vcard.email.value = profil.email
+        vcard.email.type_param = 'INTERNET'
+    
+    if profil.telephone:
+        vcard.add('tel')
+        vcard.tel.value = profil.telephone
+        vcard.tel.type_param = 'CELL'
+    
+    if profil.biographie:
+        vcard.add('note')
+        vcard.note.value = profil.biographie
+    
+    response_data = vcard.serialize()
+    
+    return send_file(
+        BytesIO(response_data.encode('utf-8')),
+        mimetype='text/vcard',
+        as_attachment=True,
+        download_name=f'{profil.slug}.vcf'
+    )
+
+# ============================================
+# ROUTES ADMIN - AUTHENTIFICATION
+# ============================================
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    """Connexion admin"""
     if request.method == 'POST':
-        password = request.form.get('password')
-        if password == 'monmotdepasse123': 
-            session['logged_in'] = True
-            return redirect(url_for('profiles_list')) 
+        password = request.form.get('password', '')
+        
+        if check_password_hash(ADMIN_PASSWORD_HASH, password):
+            session['admin_logged_in'] = True
+            flash('✅ Connexion réussie !', 'success')
+            return redirect(url_for('admin_dashboard'))
         else:
-            # Assurez-vous que le template 'login.html' est bien présent
-            return render_template('login.html', error="Mot de passe incorrect")
-    return render_template('login.html', error=None)
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    return redirect(url_for('login'))
-
-@app.route('/profiles')
-def profiles_list():
-    """Affiche la liste de tous les profils pour l'édition et la gestion."""
+            flash('❌ Mot de passe incorrect', 'danger')
     
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-        
-    all_profiles = session_db.query(Profil).all()
-    
-    # Assurez-vous que le template 'profiles.html' est bien présent
-    return render_template('profiles.html', profiles=all_profiles)
+    return render_template('admin/login.html')
 
-# NOUVELLE ROUTE : Suppression de Profil
-@app.route('/profiles/delete/<slug_profil>', methods=['POST'])
-def delete_profile(slug_profil):
-    """Supprime un profil de la base de données."""
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
+@app.route('/admin/logout')
+def admin_logout():
+    """Déconnexion"""
+    session.clear()
+    flash('👋 Déconnecté avec succès', 'info')
+    return redirect(url_for('index'))
 
-    profil = session_db.query(Profil).filter_by(slug=slug_profil).first()
-    
-    if profil:
-        session_db.delete(profil)
-        session_db.commit()
-    return redirect(url_for('profiles_list'))
+# ============================================
+# ROUTES ADMIN - GESTION PROFILS
+# ============================================
+@app.route('/admin')
+@app.route('/admin/dashboard')
+@admin_required
+def admin_dashboard():
+    """Tableau de bord"""
+    profils = Profil.query.order_by(Profil.updated_at.desc()).all()
+    return render_template('admin/dashboard.html', profils=profils)
 
-
-@app.route('/edition/<slug_profil>', methods=['GET', 'POST']) 
-@app.route('/edition', methods=['GET', 'POST'])
-def edition_profil(slug_profil='mon-profil'):
-    """Affiche la page d'édition simplifiée des informations (inclut les liens)."""
-    
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-        
-    if slug_profil.startswith('new-'):
-        new_slug = 'profile-' + uuid.uuid4().hex[:8]
-        profil = get_or_create_profil(new_slug)
-        return redirect(url_for('edition_profil', slug_profil=new_slug))
-    
-    profil = get_or_create_profil(slug_profil) 
-
+@app.route('/admin/profil/nouveau', methods=['GET', 'POST'])
+@admin_required
+def create_profil():
+    """Créer un nouveau profil"""
     if request.method == 'POST':
-        # ... (Logique de sauvegarde) ...
-        nouveau_nom = request.form.get('nom')
-        nouveau_slug = slugify(nouveau_nom)
+        nom = request.form.get('nom', '').strip()
         
-        if nouveau_slug != profil.slug:
-            if session_db.query(Profil).filter(Profil.slug == nouveau_slug, Profil.id != profil.id).first():
-                pass
-            else:
-                profil.slug = nouveau_slug
+        if not nom:
+            flash('❌ Le nom est requis', 'danger')
+            return render_template('admin/create_profil.html')
         
-        # Le reste du POST est le code de sauvegarde complet...
-        # ... (Logique de gestion de photo et de sauvegarde des champs) ...
+        email = request.form.get('email', '').strip()
+        if email and not validate_email(email):
+            flash('❌ Email invalide', 'danger')
+            return render_template('admin/create_profil.html')
         
-        session_db.commit()
-        create_backup(profil) 
-
-        return redirect(url_for('edition_profil', slug_profil=profil.slug))
+        telephone = request.form.get('telephone', '').strip()
+        if telephone and not validate_phone(telephone):
+            flash('❌ Téléphone invalide', 'danger')
+            return render_template('admin/create_profil.html')
+        
+        slug = generate_slug(nom)
+        
+        if Profil.query.filter_by(slug=slug).first():
+            flash('❌ Ce nom existe déjà', 'danger')
+            return render_template('admin/create_profil.html')
+        
+        profil = Profil(
+            slug=slug,
+            nom=nom,
+            titre=request.form.get('titre', '').strip(),
+            biographie=request.form.get('biographie', '').strip(),
+            email=email,
+            telephone=telephone,
+            couleur_principale=request.form.get('couleur_principale', '#007bff'),
+            couleur_fond=request.form.get('couleur_fond', '#ffffff'),
+            couleur_texte_h1=request.form.get('couleur_texte_h1', '#000000'),
+            couleur_texte_bio=request.form.get('couleur_texte_bio', '#666666'),
+            template=request.form.get('template', 'modern'),
+        )
+        
+        db.session.add(profil)
+        db.session.commit()
+        
+        flash('✅ Profil créé avec succès !', 'success')
+        send_webhook(profil, 'profile_created')
+        return redirect(url_for('edit_profil', slug_profil=profil.slug))
     
-    all_links = session_db.query(Lien).filter_by(profil_id=profil.id).order_by(Lien.link_order).all() 
-    return render_template('edition_profil.html', profil=profil, all_links=all_links)
+    return render_template('admin/create_profil.html')
 
-@app.route('/live-edit/<slug_profil>', methods=['GET', 'POST'])
-@app.route('/live-edit', methods=['GET', 'POST'])
-def live_edit(slug_profil='mon-profil'):
-    """Affiche la page d'édition en direct et gère la sauvegarde du design."""
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-
-    profil = get_or_create_profil(slug_profil)
+@app.route('/admin/profil/<slug_profil>/editer', methods=['GET', 'POST'])
+@admin_required
+def edit_profil(slug_profil):
+    """Éditer un profil"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
     
-    # ... (Logique de sauvegarde du POST de live-edit) ...
-
-    all_links = session_db.query(Lien).filter_by(profil_id=profil.id).all()
-    return render_template('live_editor.html', profil=profil, all_links=all_links)
-
-@app.route('/gerer_liens', methods=['POST'])
-def gerer_liens():
-    # ... (Logique de gestion des liens) ...
+    if request.method == 'POST':
+        profil.nom = request.form.get('nom', profil.nom).strip()
+        profil.titre = request.form.get('titre', '').strip()
+        profil.biographie = request.form.get('biographie', '').strip()
+        
+        email = request.form.get('email', '').strip()
+        if email and not validate_email(email):
+            flash('❌ Email invalide', 'danger')
+            return render_template('admin/edit_profil.html', profil=profil)
+        profil.email = email
+        
+        telephone = request.form.get('telephone', '').strip()
+        if telephone and not validate_phone(telephone):
+            flash('❌ Téléphone invalide', 'danger')
+            return render_template('admin/edit_profil.html', profil=profil)
+        profil.telephone = telephone
+        
+        # Couleurs
+        for color_field in ['couleur_principale', 'couleur_fond', 'couleur_texte_h1', 'couleur_texte_bio']:
+            color = request.form.get(color_field, '').strip()
+            if color and validate_hex_color(color):
+                setattr(profil, color_field, color)
+        
+        # Positions photo
+        try:
+            x = int(str(request.form.get('photo_position_x', 50)).rstrip('%'))
+            y = int(str(request.form.get('photo_position_y', 50)).rstrip('%'))
+            profil.photo_position_x = max(0, min(100, x))
+            profil.photo_position_y = max(0, min(100, y))
+        except (ValueError, TypeError):
+            pass
+        
+        # Photo
+        if 'photo' in request.files:
+            file = request.files['photo']
+            if file and file.filename and allowed_file(file.filename):
+                filename = secure_filename(f"{profil.slug}_{datetime.utcnow().timestamp()}.{file.filename.rsplit('.', 1)[1].lower()}")
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                profil.photo_url = f'/static/uploads/{filename}'
+        
+        profil.updated_at = datetime.utcnow()
+        db.session.commit()
+        
+        flash('✅ Profil mis à jour !', 'success')
+        send_webhook(profil, 'profile_updated')
+        return render_template('admin/edit_profil.html', profil=profil)
     
-    profil = session_db.query(Profil).filter_by(slug=request.form.get('profil_slug')).first()
-    if not profil: return "Erreur: Profil non trouvé", 404
-    
-    # ... (Logique d'ajout/suppression) ...
-    
-    return redirect(url_for('edition_profil', slug_profil=profil.slug)) 
+    return render_template('admin/edit_profil.html', profil=profil)
 
-# ... (Les autres routes sont omises pour la clarté) ...
+@app.route('/admin/profil/<slug_profil>/supprimer', methods=['POST'])
+@admin_required
+def delete_profil(slug_profil):
+    """Supprimer un profil"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    nom = profil.nom
+    db.session.delete(profil)
+    db.session.commit()
+    
+    flash(f'✅ Profil "{nom}" supprimé', 'success')
+    return redirect(url_for('admin_dashboard'))
 
+# ============================================
+# ROUTES ADMIN - GESTION LIENS
+# ============================================
+@app.route('/admin/liens/<slug_profil>', methods=['GET'])
+@admin_required
+def manage_liens(slug_profil):
+    """Page de gestion des liens avec drag & drop"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    liens = Lien.query.filter_by(profil_id=profil.id).order_by(Lien.link_order).all()
+    return render_template('admin/manage_liens.html', profil=profil, liens=liens)
+
+@app.route('/admin/profil/<int:profil_id>/lien', methods=['POST'])
+@admin_required
+def add_lien(profil_id):
+    """Ajouter un lien"""
+    profil = Profil.query.get_or_404(profil_id)
+    
+    type_lien = request.form.get('type_lien', '').strip()
+    url = request.form.get('url', '').strip()
+    nom = request.form.get('nom', type_lien).strip()
+    
+    if not url.startswith(('http://', 'https://', 'mailto:', 'tel:')):
+        url = 'https://' + url
+    
+    lien = Lien(
+        profil_id=profil_id,
+        type_lien=type_lien,
+        nom=nom,
+        url=url,
+        link_order=Lien.query.filter_by(profil_id=profil_id).count()
+    )
+    
+    db.session.add(lien)
+    db.session.commit()
+    
+    flash(f'✅ Lien {type_lien} ajouté', 'success')
+    send_webhook(profil, 'link_added', {'type': type_lien})
+    return redirect(url_for('manage_liens', slug_profil=profil.slug))
+
+@app.route('/admin/lien/<int:lien_id>/update', methods=['POST'])
+@admin_required
+def update_lien(lien_id):
+    """Mettre à jour un lien"""
+    lien = Lien.query.get_or_404(lien_id)
+    
+    lien.nom = request.form.get('nom', lien.nom).strip()
+    lien.type_lien = request.form.get('type_lien', lien.type_lien).strip()
+    url = request.form.get('url', lien.url).strip()
+    
+    if not url.startswith(('http://', 'https://', 'mailto:', 'tel:')):
+        url = 'https://' + url
+    
+    lien.url = url
+    db.session.commit()
+    
+    flash('✅ Lien mis à jour', 'success')
+    return redirect(url_for('manage_liens', slug_profil=lien.profil.slug))
+
+@app.route('/admin/lien/<int:lien_id>/supprimer', methods=['POST'])
+@admin_required
+def delete_lien(lien_id):
+    """Supprimer un lien"""
+    lien = Lien.query.get_or_404(lien_id)
+    profil_slug = lien.profil.slug
+    db.session.delete(lien)
+    db.session.commit()
+    
+    flash('✅ Lien supprimé', 'success')
+    return redirect(url_for('manage_liens', slug_profil=profil_slug))
+
+@app.route('/admin/liens/reorder', methods=['POST'])
+@admin_required
+def reorder_liens():
+    """Réordonner les liens (drag & drop)"""
+    data = request.get_json()
+    link_ids = data.get('link_ids', [])
+    
+    for index, link_id in enumerate(link_ids):
+        lien = Lien.query.get(link_id)
+        if lien:
+            lien.link_order = index
+    
+    db.session.commit()
+    return jsonify({'success': True})
+
+# ============================================
+# ROUTES ADMIN - PARAMÈTRES AVANCÉS
+# ============================================
+@app.route('/admin/profil/<slug_profil>/parametres', methods=['GET', 'POST'])
+@admin_required
+def parametres_profil(slug_profil):
+    """Paramètres avancés du profil"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    if request.method == 'POST':
+        profil.theme = request.form.get('theme', 'light')
+        profil.animations = request.form.get('animations') == 'on'
+        profil.layout = request.form.get('layout', 'vertical')
+        profil.template = request.form.get('template', 'modern')
+        profil.webhook_url = request.form.get('webhook_url', '').strip() or None
+        
+        # Sécurité - Protection par mot de passe
+        if request.form.get('is_protected') == 'on':
+            profil.is_protected = True
+            new_password = request.form.get('profil_password', '')
+            if new_password:
+                profil.profil_password = generate_password_hash(new_password)
+        else:
+            profil.is_protected = False
+            profil.profil_password = None
+        
+        db.session.commit()
+        flash('✅ Paramètres sauvegardés', 'success')
+        send_webhook(profil, 'settings_updated')
+        return redirect(url_for('parametres_profil', slug_profil=slug_profil))
+    
+    return render_template('admin/parametres_profil.html', profil=profil)
+
+# ============================================
+# ROUTES ADMIN - LIVE PREVIEW
+# ============================================
+@app.route('/admin/profil/<slug_profil>/live-preview')
+@admin_required
+def live_preview(slug_profil):
+    """Aperçu en temps réel du profil"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    liens = Lien.query.filter_by(profil_id=profil.id).order_by(Lien.link_order).all()
+    return render_template('admin/live_preview.html', profil=profil, liens=liens)
+
+# ============================================
+# ROUTES ADMIN - ANALYTICS
+# ============================================
+@app.route('/admin/profil/<slug_profil>/analytics')
+@admin_required
+def analytics_profil(slug_profil):
+    """Statistiques du profil"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    # Vues totales
+    view_count = Analytics.query.filter_by(profil_id=profil.id, event_type='view').count()
+    
+    # Clics par lien
+    liens_with_clicks = []
+    for lien in profil.liens:
+        click_count = Analytics.query.filter_by(lien_id=lien.id, event_type='click').count()
+        liens_with_clicks.append({
+            'id': lien.id,
+            'nom': lien.nom,
+            'url': lien.url,
+            'clicks': click_count
+        })
+    
+    # 30 derniers jours
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    recent_views = Analytics.query.filter_by(
+        profil_id=profil.id, 
+        event_type='view'
+    ).filter(Analytics.created_at >= thirty_days_ago).count()
+    
+    # Données pour graphique (7 derniers jours)
+    chart_data = {}
+    for i in range(7, -1, -1):
+        date = (datetime.utcnow() - timedelta(days=i)).strftime('%Y-%m-%d')
+        views = Analytics.query.filter_by(profil_id=profil.id, event_type='view').filter(
+            Analytics.created_at >= datetime.strptime(date, '%Y-%m-%d'),
+            Analytics.created_at < datetime.strptime(date, '%Y-%m-%d') + timedelta(days=1)
+        ).count()
+        chart_data[date] = views
+    
+    return render_template('admin/analytics_profil.html', 
+                         profil=profil, 
+                         view_count=view_count,
+                         liens_with_clicks=liens_with_clicks,
+                         recent_views=recent_views,
+                         chart_data=chart_data)
+
+# ============================================
+# ROUTES ADMIN - EXPORT
+# ============================================
+@app.route('/admin/profil/<slug_profil>/qr-download')
+@admin_required
+def qr_download(slug_profil):
+    """Télécharge le QR code"""
+    profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+    
+    profile_url = request.url_root.rstrip('/') + url_for('profil_public', slug_profil=profil.slug)
+    
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(profile_url)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color='black', back_color='white')
+    img_io = BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+    
+    return send_file(
+        img_io,
+        mimetype='image/png',
+        as_attachment=True,
+        download_name=f'qr_{profil.slug}.png'
+    )
+
+@app.route('/admin/profil/<slug_profil>/export-pdf')
+@admin_required
+def export_pdf(slug_profil):
+    """Exporte le profil en PDF"""
+    try:
+        from reportlab.lib.pagesizes import letter
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.lib import colors
+        
+        profil = Profil.query.filter_by(slug=slug_profil).first_or_404()
+        
+        # Créer le PDF
+        pdf_buffer = BytesIO()
+        doc = SimpleDocTemplate(pdf_buffer, pagesize=letter)
+        elements = []
+        
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=24,
+            textColor=colors.HexColor(profil.couleur_principale),
+            spaceAfter=30,
+        )
+        
+        # Titre
+        elements.append(Paragraph(profil.nom, title_style))
+        
+        if profil.titre:
+            elements.append(Paragraph(f"<i>{profil.titre}</i>", styles['Heading3']))
+        
+        elements.append(Spacer(1, 0.3*inch))
+        
+        # Info contact
+        contact_info = []
+        if profil.email:
+            contact_info.append(f"📧 Email: {profil.email}")
+        if profil.telephone:
+            contact_info.append(f"📞 Tél: {profil.telephone}")
+        
+        for info in contact_info:
+            elements.append(Paragraph(info, styles['Normal']))
+        
+        elements.append(Spacer(1, 0.3*inch))
+        
+        # Biographie
+        if profil.biographie:
+            elements.append(Paragraph("<b>Biographie</b>", styles['Heading3']))
+            elements.append(Paragraph(profil.biographie, styles['Normal']))
+            elements.append(Spacer(1, 0.2*inch))
+        
+        # Liens
+        if profil.liens:
+            elements.append(Paragraph("<b>Liens</b>", styles['Heading3']))
+            for lien in profil.liens:
+                elements.append(Paragraph(f"• {lien.nom}: {lien.url}", styles['Normal']))
+        
+        doc.build(elements)
+        pdf_buffer.seek(0)
+        
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'{profil.slug}.pdf'
+        )
+    except ImportError:
+        flash('❌ ReportLab non installé. Installez: pip install reportlab', 'danger')
+        return redirect(url_for('edit_profil', slug_profil=slug_profil))
+
+# ============================================
+# GESTION ERREURS
+# ============================================
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('500.html'), 500
+
+# ============================================
+# INITIALISATION
+# ============================================
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    with app.app_context():
+        db.create_all()
+    
+    debug_mode = os.environ.get('FLASK_ENV') == 'development'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)

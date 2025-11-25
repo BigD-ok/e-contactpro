@@ -1,308 +1,1449 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Editor - {{ profil.nom }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    
-    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+{% extends "base_admin.html" %}
+{% block title %}Éditeur Visuel - {{ profil.nom }}{% endblock %}
 
-    <style>
-        /* Styles spécifiques au Layout ADMIN */
-        body {
-            display: flex; 
-            padding-top: 0 !important;
-            background-color: #f4f6f9;
-            min-height: 100vh;
+{# VIDER LA SIDEBAR #}
+{% block sidebar %}
+<!-- Sidebar désactivée pour l'éditeur visuel -->
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* ============================================
+       MASQUER COMPLÈTEMENT LA SIDEBAR
+       ============================================ */
+    body .sidebar,
+    aside.sidebar,
+    .sidebar-nav {
+        display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        opacity: 0 !important;
+    }
+
+    body .main-content,
+    main.main-content {
+        margin-left: 0 !important;
+        width: 100vw !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* ============================================
+       LAYOUT PRINCIPAL
+       ============================================ */
+    .editor-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        background: #f5f7fa;
+    }
+
+    /* ============================================
+       PANNEAU DE CONTRÔLES (GAUCHE)
+       ============================================ */
+    .controls-panel {
+        width: 380px;
+        background: white;
+        border-right: 1px solid #e2e8f0;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+
+    .panel-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .panel-header h2 {
+        margin: 0 0 8px 0;
+        font-size: 1.5em;
+        font-weight: 700;
+    }
+
+    .panel-subtitle {
+        opacity: 0.9;
+        font-size: 0.9em;
+    }
+
+    .control-section {
+        padding: 25px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .control-section:last-child {
+        border-bottom: none;
+    }
+
+    .section-title {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .color-control {
+        margin-bottom: 20px;
+    }
+
+    .color-control:last-child {
+        margin-bottom: 0;
+    }
+
+    .color-label {
+        display: block;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 10px;
+        font-size: 0.9em;
+    }
+
+    .color-input-group {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .color-picker-wrapper {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 3px solid #e2e8f0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .color-picker-wrapper:hover {
+        border-color: #667eea;
+        transform: scale(1.05);
+    }
+
+    .color-picker-wrapper input[type="color"] {
+        position: absolute;
+        width: 120%;
+        height: 120%;
+        top: -10%;
+        left: -10%;
+        border: none;
+        cursor: pointer;
+    }
+
+    .color-hex-input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+    .color-hex-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* ============================================
+       THÈMES PRÉDÉFINIS
+       ============================================ */
+    .themes-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .theme-preset {
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        text-align: center;
+    }
+
+    .theme-preset:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border-color: white;
+    }
+
+    .theme-name {
+        font-weight: 600;
+        color: white;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+    }
+
+    .theme-colors {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .theme-color-sample {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    /* ============================================
+       POSITION PHOTO
+       ============================================ */
+    .position-control {
+        margin-bottom: 20px;
+    }
+
+    .position-slider {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .position-slider input[type="range"] {
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        background: #e2e8f0;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .position-slider input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .position-slider input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .position-value {
+        text-align: center;
+        font-weight: 600;
+        color: #4a5568;
+        margin-top: 8px;
+        font-size: 0.9em;
+    }
+
+    /* ============================================
+       BOUTON SAUVEGARDER
+       ============================================ */
+    .save-section {
+        padding: 25px;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border-top: 2px solid #e2e8f0;
+        position: sticky;
+        bottom: 0;
+    }
+
+    .btn-save {
+        width: 100%;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 16px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    .btn-save:active {
+        transform: translateY(0);
+    }
+
+    /* ============================================
+       ZONE DE PRÉVISUALISATION (DROITE)
+       ============================================ */
+    .preview-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        position: relative;
+    }
+
+    .preview-header {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-preview-action {
+        background: white;
+        border: 2px solid #e2e8f0;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-preview-action:hover {
+        border-color: #667eea;
+        color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .preview-container {
+        max-width: 500px;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        position: relative;
+    }
+
+    .device-frame {
+        padding: 15px;
+        background: #1a1a1a;
+        border-radius: 20px;
+    }
+
+    .device-notch {
+        width: 150px;
+        height: 25px;
+        background: #1a1a1a;
+        margin: 0 auto 10px;
+        border-radius: 0 0 15px 15px;
+    }
+
+    #preview-iframe {
+        width: 100%;
+        height: 750px;
+        border: none;
+        border-radius: 10px;
+        background: white;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1200px) {
+        .controls-panel {
+            width: 320px;
         }
-        .sidebar {
-            width: 300px; /* Largeur ajustée pour l'éditeur */
-            background-color: #212529; 
-            color: #f8f9fa;
-            height: 100vh;
-            position: fixed;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            overflow-y: auto;
+
+        .preview-container {
+            max-width: 400px;
         }
-        .sidebar-logo {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 25px;
-            border-radius: 8px; 
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+    }
+
+    @media (max-width: 992px) {
+        .editor-container {
+            flex-direction: column;
         }
-        .sidebar-nav a {
-            display: block;
-            color: #ced4da;
-            text-decoration: none;
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            transition: background-color 0.2s, color 0.2s;
-            font-weight: 500;
+
+        .controls-panel {
+            width: 100%;
+            max-height: 50vh;
         }
-        .sidebar-nav a:hover, .sidebar-nav a.active {
-            background-color: #495057;
-            color: white;
-        }
+
         .preview-area {
-            flex-grow: 1;
-            margin-left: 300px; 
             padding: 20px;
         }
-        .preview-content {
-            max-width: 450px; 
-            margin: 0 auto;
-            padding-top: 20px; 
+
+        .preview-container {
+            max-width: 100%;
         }
+
         #preview-iframe {
-            width: 100%; 
-            height: calc(100vh - 40px);
-            border: none; 
-            box-shadow: 0 0 10px rgba(0,0,0,0.3); 
-            border-radius: 20px;
+            height: 600px;
         }
-        /* Styles de la palette */
-        .color-palette-swatch {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            position: relative;
-            margin-top: 5px;
-            border: 2px solid transparent;
-        }
-        .color-palette-swatch.active {
-            border: 2px solid #03a9f4; /* Mettre en surbrillance la couleur active */
-        }
-    </style>
-</head>
-<body>
-    <div class="sidebar">
-        <img src="{{ url_for('static', filename='uploads/logo_econtact_pro.jpg') }}" 
-             alt="E-Contact Pro" 
-             class="sidebar-logo">
-        
-        <hr style="border-top: 1px solid #495057; margin-bottom: 25px;">
+    }
 
-        <div class="sidebar-nav">
-            <a href="{{ url_for('profiles_list') }}">
-                👥 Gérer les Clients
-            </a>
-            <a href="{{ url_for('edition_profil', slug_profil=profil.slug) }}">
-                📝 Éditer les Infos & Liens
-            </a>
-            <a href="{{ url_for('live_edit', slug_profil=profil.slug) }}" class="active">
-                🎨 Éditeur Visuel
-            </a>
-            <a href="{{ url_for('logout') }}" style="color: #dc3545; margin-top: 30px;">
-                🚪 Déconnexion
-            </a>
+    @media (max-width: 768px) {
+        .themes-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .preview-header {
+            position: static;
+            margin-bottom: 20px;
+        }
+
+        #preview-iframe {
+            height: 500px;
+        }
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .controls-panel {
+        animation: slideInLeft 0.5s ease-out;
+    }
+
+    .preview-area {
+        animation: slideInRight 0.5s ease-out;
+    }
+
+    /* ============================================
+       SCROLLBAR PERSONNALISÉE
+       ============================================ */
+    .controls-panel::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .controls-panel::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="editor-container">
+    <!-- Panneau de contrôles -->
+    <div class="controls-panel">
+        <div class="panel-header">
+            <h2>🎨 Personnalisation</h2>
+            <p class="panel-subtitle">{{ profil.nom }}</p>
         </div>
-        
-        <hr style="border-top: 1px solid #495057; margin-top: 25px;">
 
+        <form method="POST" id="design-form">
+            <!-- Section Couleurs -->
+            <div class="control-section">
+                <h3 class="section-title">🎨 Couleurs du Profil</h3>
 
-        <h2 style="color: #03a9f4;">Éditeur Visuel</h2>
+                <div class="color-control">
+                    <label class="color-label">Couleur Principale (Boutons)</label>
+                    <div class="color-input-group">
+                        <div class="color-picker-wrapper">
+                            <input type="color" 
+                                   id="couleur_principale" 
+                                   name="couleur_principale" 
+                                   value="{{ profil.couleur_principale }}"
+                                   onchange="updateColor('principale', this.value)">
+                        </div>
+                        <input type="text" 
+                               class="color-hex-input" 
+                               id="couleur_principale_hex"
+                               name="couleur_principale_hex"
+                               value="{{ profil.couleur_principale }}"
+                               pattern="^#[0-9A-Fa-f]{6}$"
+                               maxlength="7"
+                               onchange="syncColorPicker('principale', this.value)">
+                    </div>
+                </div>
 
-        <p><a href="{{ url_for('profiles_list') }}" style="color: #ced4da; font-weight: bold; text-decoration: none;">← Retour à la Liste</a></p>
+                <div class="color-control">
+                    <label class="color-label">Couleur de Fond</label>
+                    <div class="color-input-group">
+                        <div class="color-picker-wrapper">
+                            <input type="color" 
+                                   id="couleur_fond" 
+                                   name="couleur_fond" 
+                                   value="{{ profil.couleur_fond }}"
+                                   onchange="updateColor('fond', this.value)">
+                        </div>
+                        <input type="text" 
+                               class="color-hex-input" 
+                               id="couleur_fond_hex"
+                               name="couleur_fond_hex"
+                               value="{{ profil.couleur_fond }}"
+                               pattern="^#[0-9A-Fa-f]{6}$"
+                               maxlength="7"
+                               onchange="syncColorPicker('fond', this.value)">
+                    </div>
+                </div>
 
-        <form id="design-form" method="POST" action="{{ url_for('live_edit', slug_profil=profil.slug) }}">
-            
-            <button type="submit" class="btn principal" style="width: 100%;">Enregistrer le Design Final</button>
-            <a href="{{ url_for('profil_public', slug_profil=profil.slug) }}" target="_blank" class="btn" style="width: 100%; margin-top: 10px;">Voir le Profil Public (Final)</a>
-            <hr>
+                <div class="color-control">
+                    <label class="color-label">Couleur Texte (Nom)</label>
+                    <div class="color-input-group">
+                        <div class="color-picker-wrapper">
+                            <input type="color" 
+                                   id="couleur_texte_h1" 
+                                   name="couleur_texte_h1" 
+                                   value="{{ profil.couleur_texte_h1 }}"
+                                   onchange="updateColor('texte_h1', this.value)">
+                        </div>
+                        <input type="text" 
+                               class="color-hex-input" 
+                               id="couleur_texte_h1_hex"
+                               name="couleur_texte_h1_hex"
+                               value="{{ profil.couleur_texte_h1 }}"
+                               pattern="^#[0-9A-Fa-f]{6}$"
+                               maxlength="7"
+                               onchange="syncColorPicker('texte_h1', this.value)">
+                    </div>
+                </div>
 
-            <h3 style="font-size: 1.2em;">Position de la Photo</h3>
-
-            <p style="font-size: 0.9em; color: #6c757d;">
-                Position (X: <span id="x_value">{{ profil.photo_position_x }}</span> / Y: <span id="y_value">{{ profil.photo_position_y }}</span>)
-            </p>
-
-            <input type="hidden" id="photo_pos_x_value" name="photo_pos_x_value" value="{{ profil.photo_position_x }}">
-            <input type="hidden" id="photo_pos_y_value" name="photo_pos_y_value" value="{{ profil.photo_position_y }}">
-            
-            <input type="hidden" id="couleur_principale_hex" name="couleur_principale_hex" value="{{ profil.couleur_principale }}">
-            <input type="hidden" id="couleur_fond_hex" name="couleur_fond_hex" value="{{ profil.couleur_fond }}">
-            <input type="hidden" id="couleur_texte_h1_hex" name="couleur_texte_h1_hex" value="{{ profil.couleur_texte_h1 }}">
-            <input type="hidden" id="couleur_texte_bio_hex" name="couleur_texte_bio_hex" value="{{ profil.couleur_texte_bio }}">
-
-
-            <h3 style="font-size: 1.2em; margin-top: 20px;">Palette Principale</h3>
-
-            <label>Couleur Principale (Boutons)</label>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                {% set palette_principale = ['#001F3F', '#343A40', '#2F4F4F', '#5B3979', '#007BFF', '#CC5500', '#8B0000', '#6C757D'] %}
-                {% for color in palette_principale %}
-                    <div class="color-palette-swatch" data-target="principale" data-color="{{ color }}" style="background-color: {{ color }};"></div>
-                {% endfor %}
+                <div class="color-control">
+                    <label class="color-label">Couleur Texte (Biographie)</label>
+                    <div class="color-input-group">
+                        <div class="color-picker-wrapper">
+                            <input type="color" 
+                                   id="couleur_texte_bio" 
+                                   name="couleur_texte_bio" 
+                                   value="{{ profil.couleur_texte_bio }}"
+                                   onchange="updateColor('texte_bio', this.value)">
+                        </div>
+                        <input type="text" 
+                               class="color-hex-input" 
+                               id="couleur_texte_bio_hex"
+                               name="couleur_texte_bio_hex"
+                               value="{{ profil.couleur_texte_bio }}"
+                               pattern="^#[0-9A-Fa-f]{6}$"
+                               maxlength="7"
+                               onchange="syncColorPicker('texte_bio', this.value)">
+                    </div>
+                </div>
             </div>
-            
-            <label style="margin-top: 20px;">Couleur de Fond</label>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                {% set palette_fond = ['#F8F9FA', '#E9ECEF', '#CED4DA', '#343A40', '#121212', '#FFFFFF', '#DEB887', '#AC1B1B'] %}
-                {% for color in palette_fond %}
-                    <div class="color-palette-swatch" data-target="fond" data-color="{{ color }}" style="background-color: {{ color }};"></div>
-                {% endfor %}
-            </div>
-            
-            <hr>
-            
-            <h3 style="font-size: 1.2em;">Couleurs du Texte</h3>
 
-            <label>Couleur Nom/Poste</label>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                {% set palette_texte_h1 = ['#000000', '#FFFFFF', '#001F3F', '#8B0000', '#343A40', '#6C757D'] %}
-                {% for color in palette_texte_h1 %}
-                    <div class="color-palette-swatch" data-target="texte_h1" data-color="{{ color }}" style="background-color: {{ color }};"></div>
-                {% endfor %}
+            <!-- Section Thèmes Prédéfinis -->
+            <div class="control-section">
+                <h3 class="section-title">✨ Thèmes Prédéfinis</h3>
+                <div class="themes-grid">
+                    <!-- Professional -->
+                    <div class="theme-preset" onclick="applyTheme('professional')" style="background: linear-gradient(135deg, #0066CC, #FFFFFF);">
+                        <div class="theme-name">🎨 Professional</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #0066CC;"></div>
+                            <div class="theme-color-sample" style="background: #FFFFFF;"></div>
+                            <div class="theme-color-sample" style="background: #000000;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Dark Purple -->
+                    <div class="theme-preset" onclick="applyTheme('dark_purple')" style="background: linear-gradient(135deg, #BB86FC, #2D1B69);">
+                        <div class="theme-name">🎨 Dark Purple</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #BB86FC;"></div>
+                            <div class="theme-color-sample" style="background: #2D1B69;"></div>
+                            <div class="theme-color-sample" style="background: #FFFFFF;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Nature -->
+                    <div class="theme-preset" onclick="applyTheme('nature')" style="background: linear-gradient(135deg, #43A047, #FFF8E1);">
+                        <div class="theme-name">🎨 Nature</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #43A047;"></div>
+                            <div class="theme-color-sample" style="background: #FFF8E1;"></div>
+                            <div class="theme-color-sample" style="background: #2E7D32;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Élégant -->
+                    <div class="theme-preset" onclick="applyTheme('elegant')" style="background: linear-gradient(135deg, #7B1FA2, #F3E5F5);">
+                        <div class="theme-name">🎨 Élégant</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #7B1FA2;"></div>
+                            <div class="theme-color-sample" style="background: #F3E5F5;"></div>
+                            <div class="theme-color-sample" style="background: #4A148C;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Océan -->
+                    <div class="theme-preset" onclick="applyTheme('ocean')" style="background: linear-gradient(135deg, #00ACC1, #E0F7FA);">
+                        <div class="theme-name">🎨 Océan</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #00ACC1;"></div>
+                            <div class="theme-color-sample" style="background: #E0F7FA;"></div>
+                            <div class="theme-color-sample" style="background: #006064;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sunset -->
+                    <div class="theme-preset" onclick="applyTheme('sunset')" style="background: linear-gradient(135deg, #FF6F00, #FFF3E0);">
+                        <div class="theme-name">🎨 Sunset</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #FF6F00;"></div>
+                            <div class="theme-color-sample" style="background: #FFF3E0;"></div>
+                            <div class="theme-color-sample" style="background: #E65100;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Rose Gold -->
+                    <div class="theme-preset" onclick="applyTheme('rose_gold')" style="background: linear-gradient(135deg, #E91E63, #FCE4EC);">
+                        <div class="theme-name">🎨 Rose Gold</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #E91E63;"></div>
+                            <div class="theme-color-sample" style="background: #FCE4EC;"></div>
+                            <div class="theme-color-sample" style="background: #880E4F;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Minimal -->
+                    <div class="theme-preset" onclick="applyTheme('minimal')" style="background: linear-gradient(135deg, #000000, #FFFFFF);">
+                        <div class="theme-name">🎨 Minimal</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #000000;"></div>
+                            <div class="theme-color-sample" style="background: #FFFFFF;"></div>
+                            <div class="theme-color-sample" style="background: #424242;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Corporate -->
+                    <div class="theme-preset" onclick="applyTheme('corporate')" style="background: linear-gradient(135deg, #00897B, #E0F2F1);">
+                        <div class="theme-name">🎨 Corporate</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #00897B;"></div>
+                            <div class="theme-color-sample" style="background: #E0F2F1;"></div>
+                            <div class="theme-color-sample" style="background: #004D40;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tech -->
+                    <div class="theme-preset" onclick="applyTheme('tech')" style="background: linear-gradient(135deg, #00BCD4, #E1F5FE);">
+                        <div class="theme-name">🎨 Tech</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #00BCD4;"></div>
+                            <div class="theme-color-sample" style="background: #E1F5FE;"></div>
+                            <div class="theme-color-sample" style="background: #006064;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Luxe -->
+                    <div class="theme-preset" onclick="applyTheme('luxe')" style="background: linear-gradient(135deg, #9C27B0, #F3E5F5);">
+                        <div class="theme-name">🎨 Luxe</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #9C27B0;"></div>
+                            <div class="theme-color-sample" style="background: #F3E5F5;"></div>
+                            <div class="theme-color-sample" style="background: #4A148C;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Terre -->
+                    <div class="theme-preset" onclick="applyTheme('terre')" style="background: linear-gradient(135deg, #795548, #EFEBE9);">
+                        <div class="theme-name">🎨 Terre</div>
+                        <div class="theme-colors">
+                            <div class="theme-color-sample" style="background: #795548;"></div>
+                            <div class="theme-color-sample" style="background: #EFEBE9;"></div>
+                            <div class="theme-color-sample" style="background: #3E2723;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <label style="margin-top: 20px;">Couleur Biographie</label>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                {% set palette_texte_bio = ['#444444', '#000000', '#FFFFFF', '#6C757D', '#5B3979', '#2F4F4F'] %}
-                {% for color in palette_texte_bio %}
-                    <div class="color-palette-swatch" data-target="texte_bio" data-color="{{ color }}" style="background-color: {{ color }};"></div>
-                {% endfor %}
-            </div>
+            <!-- Section Position Photo -->
+            {% if profil.photo_url %}
+            <div class="control-section">
+                <h3 class="section-title">📐 Position de la Photo</h3>
 
+                <div class="position-control">
+                    <label class="color-label">Position Horizontale</label>
+                    <div class="position-slider">
+                        <input type="range" 
+                               id="photo_pos_x" 
+                               name="photo_position_x" 
+                               min="0" 
+                               max="100" 
+                               value="{{ profil.photo_position_x }}"
+                               oninput="updatePhotoPosition()">
+                        <input type="hidden" id="photo_pos_x_value" name="photo_pos_x_value" value="{{ profil.photo_position_x }}">
+                    </div>
+                    <div class="position-value" id="pos_x_value">{{ profil.photo_position_x }}%</div>
+                </div>
+
+                <div class="position-control">
+                    <label class="color-label">Position Verticale</label>
+                    <div class="position-slider">
+                        <input type="range" 
+                               id="photo_pos_y" 
+                               name="photo_position_y" 
+                               min="0" 
+                               max="100" 
+                               value="{{ profil.photo_position_y }}"
+                               oninput="updatePhotoPosition()">
+                        <input type="hidden" id="photo_pos_y_value" name="photo_pos_y_value" value="{{ profil.photo_position_y }}">
+                    </div>
+                    <div class="position-value" id="pos_y_value">{{ profil.photo_position_y }}%</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Bouton Sauvegarder -->
+            <div class="save-section">
+                <button type="submit" class="btn-save">
+                    <span>💾</span>
+                    <span>Enregistrer les modifications</span>
+                </button>
+            </div>
         </form>
-        
-        <hr>
-        
-        <a href="{{ url_for('edition_profil', slug_profil=profil.slug) }}" class="btn" style="width: 100%; background-color: #6c757d !important; border-color: #6c757d !important; color: white !important;">
-            Modifier les Données & Liens
-        </a>
-
     </div>
 
+    <!-- Zone de prévisualisation -->
     <div class="preview-area">
-        <div class="preview-content" id="preview-frame-container">
-            <iframe id="preview-iframe" src="{{ url_for('profil_public', slug_profil=profil.slug) }}" 
-                    style="width: 100%; height: 100vh; border: none; box-shadow: 0 0 10px rgba(0,0,0,0.3); border-radius: 20px;"></iframe>
+        <div class="preview-header">
+            <a href="{{ url_for('edition_profil', slug_profil=profil.slug) }}" class="btn-preview-action">
+                ← Retour à l'édition
+            </a>
+            <a href="{{ url_for('profil_public', slug_profil=profil.slug) }}" target="_blank" class="btn-preview-action">
+                👁️ Voir en plein écran
+            </a>
+        </div>
+
+        <div class="preview-container">
+            <div class="device-frame">
+                <div class="device-notch"></div>
+                <iframe id="preview-iframe" 
+                        src="{{ url_for('profil_public', slug_profil=profil.slug) }}"
+                        title="Prévisualisation du profil"></iframe>
+            </div>
         </div>
     </div>
+</div>
+{% endblock %}
 
-    <script>
+{% block scripts %}
+<script>
+    // ============================================
+    // GESTION DES COULEURS
+    // ============================================
+    function updateColor(type, value) {
+        document.getElementById('couleur_' + type + '_hex').value = value.toUpperCase();
+        updatePreview();
+    }
+
+    function syncColorPicker(type, value) {
+        if (/^#[0-9A-F]{6}$/i.test(value)) {
+            document.getElementById('couleur_' + type).value = value;
+            updatePreview();
+        }
+    }
+
+    // ============================================
+    // THÈMES PRÉDÉFINIS
+    // ============================================
+    const themes = {
+        professional: {
+            principale: '#0066CC',
+            fond: '#FFFFFF',
+            texte_h1: '#000000',
+            texte_bio: '#424242'
+        },
+        dark_purple: {
+            principale: '#BB86FC',
+            fond: '#2D1B69',
+            texte_h1: '#FFFFFF',
+            texte_bio: '#E1BEE7'
+        },
+        nature: {
+            principale: '#43A047',
+            fond: '#FFF8E1',
+            texte_h1: '#2E7D32',
+            texte_bio: '#5D4037'
+        },
+        elegant: {
+            principale: '#7B1FA2',
+            fond: '#F3E5F5',
+            texte_h1: '#4A148C',
+            texte_bio: '#616161'
+        },
+        ocean: {
+            principale: '#00ACC1',
+            fond: '#E0F7FA',
+            texte_h1: '#006064',
+            texte_bio: '#00838F'
+        },
+        sunset: {
+            principale: '#FF6F00',
+            fond: '#FFF3E0',
+            texte_h1: '#E65100',
+            texte_bio: '#BF360C'
+        },
+        rose_gold: {
+            principale: '#E91E63',
+            fond: '#FCE4EC',
+            texte_h1: '#880E4F',
+            texte_bio: '#AD1457'
+        },
+        minimal: {
+            principale: '#000000',
+            fond: '#FFFFFF',
+            texte_h1: '#000000',
+            texte_bio: '#424242'
+        },
+        corporate: {
+            principale: '#00897B',
+            fond: '#E0F2F1',
+            texte_h1: '#004D40',
+            texte_bio: '#00695C'
+        },
+        tech: {
+            principale: '#00BCD4',
+            fond: '#E1F5FE',
+            texte_h1: '#006064',
+            texte_bio: '#00838F'
+        },
+        luxe: {
+            principale: '#9C27B0',
+            fond: '#F3E5F5',
+            texte_h1: '#4A148C',
+            texte_bio: '#6A1B9A'
+        },
+        terre: {
+            principale: '#795548',
+            fond: '#EFEBE9',
+            texte_h1: '#3E2723',
+            texte_bio: '#5D4037'
+        }
+    };
+
+    function applyTheme(themeName) {
+        const theme = themes[themeName];
+        if (!theme) return;
+
+        // Mettre à jour les color pickers
+        document.getElementById('couleur_principale').value = theme.principale;
+        document.getElementById('couleur_principale_hex').value = theme.principale;
+
+        document.getElementById('couleur_fond').value = theme.fond;
+        document.getElementById('couleur_fond_hex').value = theme.fond;
+
+        document.getElementById('couleur_texte_h1').value = theme.texte_h1;
+        document.getElementById('couleur_texte_h1_hex').value = theme.texte_h1;
+
+        document.getElementById('couleur_texte_bio').value = theme.texte_bio;
+        document.getElementById('couleur_texte_bio_hex').value = theme.texte_bio;
+
+        updatePreview();
+    }
+
+    // ============================================
+    // GESTION POSITION PHOTO
+    // ============================================
+    function updatePhotoPosition() {
+        const posX = document.getElementById('photo_pos_x').value;
+        const posY = document.getElementById('photo_pos_y').value;
+
+        document.getElementById('photo_pos_x_value').value = posX;
+        document.getElementById('photo_pos_y_value').value = posY;
+        document.getElementById('pos_x_value').textContent = posX + '%';
+        document.getElementById('pos_y_value').textContent = posY + '%';
+
+        updatePreview();
+    }
+
+    // ============================================
+    // MISE À JOUR DE LA PRÉVISUALISATION
+    // ============================================
+    function updatePreview() {
         const iframe = document.getElementById('preview-iframe');
-        const posInputX = document.getElementById('photo_pos_x_value');
-        const posInputY = document.getElementById('photo_pos_y_value');
+        const currentSrc = iframe.src;
+        const url = new URL(currentSrc);
 
-        // --- Fonctions de mise à jour (Couleurs) ---
-        function updateSwatch(targetName, selectedColor) {
-            document.querySelectorAll(`[data-target="${targetName}"]`).forEach(swatch => {
-                swatch.classList.remove('active');
-                if (swatch.dataset.color === selectedColor) {
-                    swatch.classList.add('active');
-                }
-            });
+        // Ajouter les paramètres de couleur
+        url.searchParams.set('principale', document.getElementById('couleur_principale_hex').value);
+        url.searchParams.set('fond', document.getElementById('couleur_fond_hex').value);
+        url.searchParams.set('texte_h1', document.getElementById('couleur_texte_h1_hex').value);
+        url.searchParams.set('texte_bio', document.getElementById('couleur_texte_bio_hex').value);
+
+        // Ajouter les paramètres de position photo si applicable
+        const posXInput = document.getElementById('photo_pos_x');
+        const posYInput = document.getElementById('photo_pos_y');
+        if (posXInput && posYInput) {
+            url.searchParams.set('pos_x', posXInput.value);
+            url.searchParams.set('pos_y', posYInput.value);
         }
 
-        function updatePreview() {
-            const principalColor = document.getElementById('couleur_principale_hex').value;
-            const backgroundColor = document.getElementById('couleur_fond_hex').value;
-            const h1Color = document.getElementById('couleur_texte_h1_hex').value;
-            const bioColor = document.getElementById('couleur_texte_bio_hex').value;
-            const posX = posInputX.value;
-            const posY = posInputY.value;
+        iframe.src = url.toString();
+    }
 
-            document.getElementById('x_value').textContent = posX;
-            document.getElementById('y_value').textContent = posY;
+    // ============================================
+    // INITIALISATION
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ajouter un léger délai avant la première mise à jour
+        setTimeout(updatePreview, 500);
+    });
 
-            if (iframe.contentWindow) {
-                const root = iframe.contentWindow.document.documentElement;
-                const iframeImage = iframe.contentWindow.document.querySelector('.profile-image-container img');
-                
-                // 1. Couleurs
-                root.style.setProperty('--main-color', principalColor);
-                root.style.setProperty('--background-color', backgroundColor);
-                
-                // 2. Couleurs de Texte
-                root.style.setProperty('--text-h1-color', h1Color);
-                root.style.setProperty('--text-bio-color', bioColor);
+    // ============================================
+    // VALIDATION DU FORMULAIRE
+    // ============================================
+    document.getElementById('design-form').addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('.btn-save');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳</span><span>Enregistrement en cours...</span>';
+    });
+</script>
+{% endblock %}
 
-                // 3. Position de la photo
-                if (iframeImage) {
-                    iframeImage.style.objectPosition = `${posX} ${posY}`;
-                }
-            }
+{% block scripts %}
+<script>
+    // ============================================
+    // GESTION DES COULEURS
+    // ============================================
+    function updateColor(type, value) {
+        document.getElementById('couleur_' + type + '_hex').value = value.toUpperCase();
+        updatePreview();
+    }
+
+    function syncColorPicker(type, value) {
+        if (/^#[0-9A-F]{6}$/i.test(value)) {
+            document.getElementById('couleur_' + type).value = value;
+            updatePreview();
         }
-        // --- LOGIQUE GLISSER-DÉPOSER (INTERACT.JS) ---
-        function initPhotoDraggable() {
-            const imgContainer = iframe.contentWindow.document.querySelector('.profile-image-container');
-            const imgElement = imgContainer ? imgContainer.querySelector('img') : null;
+    }
+
+    // ============================================
+    // THÈMES PRÉDÉFINIS - DÉFINITIONS COMPLÈTES
+    // ============================================
+    const themes = {
+        professional: {
+            principale: '#0066CC',
+            fond: '#FFFFFF',
+            texte_h1: '#000000',
+            texte_bio: '#424242'
+        },
+        dark_purple: {
+            principale: '#BB86FC',
+            fond: '#2D1B69',
+            texte_h1: '#FFFFFF',
+            texte_bio: '#E1BEE7'
+        },
+        nature: {
+            principale: '#43A047',
+            fond: '#FFF8E1',
+            texte_h1: '#2E7D32',
+            texte_bio: '#5D4037'
+        },
+        elegant: {
+            principale: '#7B1FA2',
+            fond: '#F3E5F5',
+            texte_h1: '#4A148C',
+            texte_bio: '#616161'
+        },
+        ocean: {
+            principale: '#00ACC1',
+            fond: '#E0F7FA',
+            texte_h1: '#006064',
+            texte_bio: '#00838F'
+        },
+        sunset: {
+            principale: '#FF6F00',
+            fond: '#FFF3E0',
+            texte_h1: '#E65100',
+            texte_bio: '#BF360C'
+        },
+        rose_gold: {
+            principale: '#E91E63',
+            fond: '#FCE4EC',
+            texte_h1: '#880E4F',
+            texte_bio: '#AD1457'
+        },
+        minimal: {
+            principale: '#000000',
+            fond: '#FFFFFF',
+            texte_h1: '#000000',
+            texte_bio: '#424242'
+        },
+        corporate: {
+            principale: '#00897B',
+            fond: '#E0F2F1',
+            texte_h1: '#004D40',
+            texte_bio: '#00695C'
+        },
+        tech: {
+            principale: '#00BCD4',
+            fond: '#E1F5FE',
+            texte_h1: '#006064',
+            texte_bio: '#00838F'
+        },
+        luxe: {
+            principale: '#9C27B0',
+            fond: '#F3E5F5',
+            texte_h1: '#4A148C',
+            texte_bio: '#6A1B9A'
+        },
+        terre: {
+            principale: '#795548',
+            fond: '#EFEBE9',
+            texte_h1: '#3E2723',
+            texte_bio: '#5D4037'
+        }
+    };
+
+    function applyTheme(themeName) {
+        const theme = themes[themeName];
+        if (!theme) return;
+
+        // Animation lors du changement de thème
+        const controlsPanel = document.querySelector('.controls-panel');
+        controlsPanel.style.opacity = '0.7';
+
+        setTimeout(() => {
+            // Mettre à jour tous les contrôles de couleur
+            document.getElementById('couleur_principale').value = theme.principale;
+            document.getElementById('couleur_principale_hex').value = theme.principale;
+
+            document.getElementById('couleur_fond').value = theme.fond;
+            document.getElementById('couleur_fond_hex').value = theme.fond;
+
+            document.getElementById('couleur_texte_h1').value = theme.texte_h1;
+            document.getElementById('couleur_texte_h1_hex').value = theme.texte_h1;
+
+            document.getElementById('couleur_texte_bio').value = theme.texte_bio;
+            document.getElementById('couleur_texte_bio_hex').value = theme.texte_bio;
+
+            updatePreview();
+
+            controlsPanel.style.opacity = '1';
+        }, 200);
+    }
+
+    // ============================================
+    // GESTION POSITION PHOTO
+    // ============================================
+    function updatePhotoPosition() {
+        const posX = document.getElementById('photo_pos_x').value;
+        const posY = document.getElementById('photo_pos_y').value;
+
+        document.getElementById('photo_pos_x_value').value = posX;
+        document.getElementById('photo_pos_y_value').value = posY;
+        document.getElementById('pos_x_value').textContent = posX + '%';
+        document.getElementById('pos_y_value').textContent = posY + '%';
+
+        updatePreview();
+    }
+
+    // ============================================
+    // MISE À JOUR DE LA PRÉVISUALISATION
+    // ============================================
+    let updateTimeout;
+    function updatePreview() {
+        clearTimeout(updateTimeout);
+        
+        updateTimeout = setTimeout(() => {
+            const iframe = document.getElementById('preview-iframe');
+            const baseUrl = '{{ url_for("profil_public", slug_profil=profil.slug) }}';
             
-            if (!imgContainer) {
-                return;
+            const params = new URLSearchParams();
+            params.set('principale', document.getElementById('couleur_principale_hex').value);
+            params.set('fond', document.getElementById('couleur_fond_hex').value);
+            params.set('texte_h1', document.getElementById('couleur_texte_h1_hex').value);
+            params.set('texte_bio', document.getElementById('couleur_texte_bio_hex').value);
+
+            // Position photo si applicable
+            const posXInput = document.getElementById('photo_pos_x');
+            const posYInput = document.getElementById('photo_pos_y');
+            if (posXInput && posYInput) {
+                params.set('pos_x', posXInput.value);
+                params.set('pos_y', posYInput.value);
             }
-            if (!imgElement) {
-                return;
-            }
 
-            let currentX = parseFloat(posInputX.value); 
-            let currentY = parseFloat(posInputY.value); 
+            iframe.src = baseUrl + '?' + params.toString();
+        }, 300);
+    }
 
-            interact(imgContainer).draggable({
-                listeners: {
-                    move (event) {
-                        currentX += (event.dx / imgContainer.offsetWidth) * 100;
-                        currentY += (event.dy / imgContainer.offsetHeight) * 100;
-
-                        currentX = Math.max(0, Math.min(100, currentX));
-                        currentY = Math.max(0, Math.min(100, currentY));
-                        
-                        const newPosX = `${currentX.toFixed(1)}%`;
-                        const newPosY = `${currentY.toFixed(1)}%`;
-
-                        imgElement.style.objectPosition = `${newPosX} ${newPosY}`;
-
-                        posInputX.value = newPosX;
-                        posInputY.value = newPosY;
-                        
-                        document.getElementById('x_value').textContent = newPosX;
-                        document.getElementById('y_value').textContent = newPosY;
-                    }
+    // ============================================
+    // VALIDATION COULEUR HEX EN TEMPS RÉEL
+    // ============================================
+    function setupHexValidation() {
+        const hexInputs = document.querySelectorAll('.color-hex-input');
+        
+        hexInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                let value = this.value;
+                
+                // Ajouter # automatiquement
+                if (!value.startsWith('#')) {
+                    value = '#' + value;
+                }
+                
+                // Limiter à 7 caractères
+                if (value.length > 7) {
+                    value = value.substring(0, 7);
+                }
+                
+                this.value = value.toUpperCase();
+                
+                // Valider et synchroniser
+                if (/^#[0-9A-F]{6}$/i.test(value)) {
+                    this.style.borderColor = '#28a745';
+                    const type = this.id.replace('couleur_', '').replace('_hex', '');
+                    syncColorPicker(type, value);
+                } else {
+                    this.style.borderColor = '#e53e3e';
                 }
             });
-        }
-
-
-        // Initialisation des éléments de l'éditeur
-        document.addEventListener('DOMContentLoaded', function() {
-            // Lie les événements d'input aux swatches (couleurs)
-            document.querySelectorAll('.color-palette-swatch').forEach(swatch => {
-                swatch.addEventListener('click', function() {
-                    const target = this.dataset.target;
-                    const color = this.dataset.color;
-                    
-                    document.getElementById(`couleur_${target}_hex`).value = color;
-                    updateSwatch(target, color);
-                    updatePreview();
-                });
-            });
-
-            // Initialise l'aperçu une fois l'iframe chargée (Lancement du drag-and-drop ici)
-            iframe.onload = function() {
-                updatePreview(); 
-                setTimeout(initPhotoDraggable, 100); 
-            };
             
-            // Initialisation des swatches au chargement de la page mère
-            const initialPrincipal = document.getElementById('couleur_principale_hex').value;
-            const initialFond = document.getElementById('couleur_fond_hex').value;
-            const initialH1 = document.getElementById('couleur_texte_h1_hex').value;
-            const initialBio = document.getElementById('couleur_texte_bio_hex').value;
-
-            updateSwatch('principale', initialPrincipal);
-            updateSwatch('fond', initialFond);
-            updateSwatch('texte_h1', initialH1);
-            updateSwatch('texte_bio', initialBio);
+            input.addEventListener('blur', function() {
+                if (!/^#[0-9A-F]{6}$/i.test(this.value)) {
+                    const type = this.id.replace('couleur_', '').replace('_hex', '');
+                    this.value = document.getElementById('couleur_' + type).value;
+                    this.style.borderColor = '#e2e8f0';
+                }
+            });
         });
-    </script>
-</body>
-</html>
+    }
+
+    // ============================================
+    // RACCOURCIS CLAVIER
+    // ============================================
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + S pour sauvegarder
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            document.getElementById('design-form').submit();
+        }
+        
+        // Ctrl/Cmd + R pour réinitialiser (thème professional)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+            e.preventDefault();
+            applyTheme('professional');
+        }
+    });
+
+    // ============================================
+    // GESTION DU MODE PLEIN ÉCRAN
+    // ============================================
+    function toggleFullscreen() {
+        const previewContainer = document.querySelector('.preview-container');
+        
+        if (!document.fullscreenElement) {
+            previewContainer.requestFullscreen().catch(err => {
+                console.error('Erreur plein écran:', err);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    // ============================================
+    // COPIER LA CONFIGURATION
+    // ============================================
+    function copyConfiguration() {
+        const config = {
+            couleur_principale: document.getElementById('couleur_principale_hex').value,
+            couleur_fond: document.getElementById('couleur_fond_hex').value,
+            couleur_texte_h1: document.getElementById('couleur_texte_h1_hex').value,
+            couleur_texte_bio: document.getElementById('couleur_texte_bio_hex').value
+        };
+        
+        const posXInput = document.getElementById('photo_pos_x');
+        const posYInput = document.getElementById('photo_pos_y');
+        if (posXInput && posYInput) {
+            config.photo_position_x = posXInput.value;
+            config.photo_position_y = posYInput.value;
+        }
+        
+        navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => {
+            alert('✅ Configuration copiée dans le presse-papiers !');
+        }).catch(err => {
+            console.error('Erreur copie:', err);
+        });
+    }
+
+    // ============================================
+    // DÉTECTION DES CHANGEMENTS NON SAUVEGARDÉS
+    // ============================================
+    let hasUnsavedChanges = false;
+    
+    function markAsChanged() {
+        hasUnsavedChanges = true;
+    }
+    
+    function setupChangeDetection() {
+        const inputs = document.querySelectorAll('input[type="color"], input[type="text"], input[type="range"]');
+        
+        inputs.forEach(input => {
+            input.addEventListener('change', markAsChanged);
+        });
+    }
+    
+    window.addEventListener('beforeunload', function(e) {
+        if (hasUnsavedChanges) {
+            e.preventDefault();
+            e.returnValue = '';
+            return 'Vous avez des modifications non sauvegardées. Voulez-vous vraiment quitter ?';
+        }
+    });
+    
+    document.getElementById('design-form').addEventListener('submit', function() {
+        hasUnsavedChanges = false;
+    });
+
+    // ============================================
+    // VALIDATION DU FORMULAIRE
+    // ============================================
+    document.getElementById('design-form').addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('.btn-save');
+        
+        // Vérifier que toutes les couleurs sont valides
+        const hexInputs = document.querySelectorAll('.color-hex-input');
+        let allValid = true;
+        
+        hexInputs.forEach(input => {
+            if (!/^#[0-9A-F]{6}$/i.test(input.value)) {
+                allValid = false;
+                input.style.borderColor = '#e53e3e';
+            }
+        });
+        
+        if (!allValid) {
+            e.preventDefault();
+            alert('⚠️ Certaines couleurs sont invalides. Veuillez vérifier les codes hexadécimaux.');
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳</span><span>Enregistrement en cours...</span>';
+    });
+
+    // ============================================
+    // GESTION DU RESPONSIVE
+    // ============================================
+    function checkViewportSize() {
+        const isMobile = window.innerWidth < 992;
+        const iframe = document.getElementById('preview-iframe');
+        
+        if (isMobile) {
+            iframe.style.height = '500px';
+        } else {
+            iframe.style.height = '750px';
+        }
+    }
+    
+    window.addEventListener('resize', checkViewportSize);
+
+    // ============================================
+    // TIPS & TUTORIEL
+    // ============================================
+    function showTips() {
+        const tips = [
+            '💡 Utilisez Ctrl+S pour sauvegarder rapidement',
+            '🎨 Essayez les thèmes prédéfinis pour commencer',
+            '📱 La prévisualisation se met à jour automatiquement',
+            '🔄 Utilisez Ctrl+R pour revenir au thème professionnel',
+            '✨ Les codes couleur peuvent être copiés-collés',
+            '🖼️ Ajustez la position de la photo avec les curseurs'
+        ];
+        
+        const randomTip = tips[Math.floor(Math.random() * tips.length)];
+        console.log(randomTip);
+    }
+
+    // ============================================
+    // HISTORIQUE DES MODIFICATIONS
+    // ============================================
+    class ColorHistory {
+        constructor(maxSize = 10) {
+            this.history = [];
+            this.currentIndex = -1;
+            this.maxSize = maxSize;
+        }
+        
+        push(state) {
+            // Supprimer l'historique après l'index actuel
+            this.history = this.history.slice(0, this.currentIndex + 1);
+            
+            // Ajouter le nouvel état
+            this.history.push(state);
+            
+            // Limiter la taille
+            if (this.history.length > this.maxSize) {
+                this.history.shift();
+            } else {
+                this.currentIndex++;
+            }
+        }
+        
+        undo() {
+            if (this.currentIndex > 0) {
+                this.currentIndex--;
+                return this.history[this.currentIndex];
+            }
+            return null;
+        }
+        
+        redo() {
+            if (this.currentIndex < this.history.length - 1) {
+                this.currentIndex++;
+                return this.history[this.currentIndex];
+            }
+            return null;
+        }
+        
+        canUndo() {
+            return this.currentIndex > 0;
+        }
+        
+        canRedo() {
+            return this.currentIndex < this.history.length - 1;
+        }
+    }
+    
+    const colorHistory = new ColorHistory();
+    
+    function saveToHistory() {
+        const state = {
+            principale: document.getElementById('couleur_principale_hex').value,
+            fond: document.getElementById('couleur_fond_hex').value,
+            texte_h1: document.getElementById('couleur_texte_h1_hex').value,
+            texte_bio: document.getElementById('couleur_texte_bio_hex').value
+        };
+        
+        colorHistory.push(state);
+    }
+    
+    function restoreFromHistory(state) {
+        if (!state) return;
+        
+        document.getElementById('couleur_principale').value = state.principale;
+        document.getElementById('couleur_principale_hex').value = state.principale;
+        
+        document.getElementById('couleur_fond').value = state.fond;
+        document.getElementById('couleur_fond_hex').value = state.fond;
+        
+        document.getElementById('couleur_texte_h1').value = state.texte_h1;
+        document.getElementById('couleur_texte_h1_hex').value = state.texte_h1;
+        
+        document.getElementById('couleur_texte_bio').value = state.texte_bio;
+        document.getElementById('couleur_texte_bio_hex').value = state.texte_bio;
+        
+        updatePreview();
+    }
+    
+    // Raccourcis clavier pour undo/redo
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+            e.preventDefault();
+            restoreFromHistory(colorHistory.undo());
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+            e.preventDefault();
+            restoreFromHistory(colorHistory.redo());
+        }
+    });
+
+    // ============================================
+    // INITIALISATION COMPLÈTE
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🎨 Éditeur Visuel E-Contact Pro chargé');
+        
+        // Setup des validations
+        setupHexValidation();
+        setupChangeDetection();
+        
+        // Vérifier la taille de la fenêtre
+        checkViewportSize();
+        
+        // Sauvegarder l'état initial dans l'historique
+        saveToHistory();
+        
+        // Afficher un tip aléatoire
+        showTips();
+        
+        // Mise à jour initiale de la prévisualisation
+        setTimeout(() => {
+            updatePreview();
+        }, 500);
+        
+        // Message de bienvenue dans la console
+        console.log('%c💡 Raccourcis clavier:', 'font-weight: bold; font-size: 14px;');
+        console.log('Ctrl+S : Sauvegarder');
+        console.log('Ctrl+R : Réinitialiser au thème professionnel');
+        console.log('Ctrl+Z : Annuler');
+        console.log('Ctrl+Y : Refaire');
+    });
+
+    // ============================================
+    // DÉTECTION DE CHANGEMENTS DANS L'IFRAME
+    // ============================================
+    const iframe = document.getElementById('preview-iframe');
+    
+    iframe.addEventListener('load', function() {
+        console.log('✅ Prévisualisation chargée');
+    });
+    
+    iframe.addEventListener('error', function() {
+        console.error('❌ Erreur de chargement de la prévisualisation');
+    });
+
+    // ============================================
+    // EXPORT DES FONCTIONS GLOBALES
+    // ============================================
+    window.editorFunctions = {
+        applyTheme,
+        updateColor,
+        syncColorPicker,
+        updatePhotoPosition,
+        updatePreview,
+        toggleFullscreen,
+        copyConfiguration,
+        saveToHistory,
+        restoreFromHistory
+    };
+</script>
+{% endblock %}

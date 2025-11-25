@@ -1,0 +1,750 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Gestion des Clients - E-Contact Pro{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* ============================================
+       HEADER DE PAGE
+       ============================================ */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .page-header h1 {
+        margin: 0;
+        font-size: 2em;
+        color: #212529;
+        font-weight: 700;
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    /* ============================================
+       STATISTIQUES
+       ============================================ */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-card.success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .stat-card.info {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+    
+    .stat-icon {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        opacity: 0.9;
+    }
+    
+    .stat-value {
+        font-size: 2em;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 0.9em;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* ============================================
+       BARRE DE RECHERCHE & FILTRES
+       ============================================ */
+    .search-bar {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .search-input-wrapper {
+        flex: 1;
+        min-width: 250px;
+        position: relative;
+    }
+    
+    .search-input-wrapper input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s;
+    }
+    
+    .search-input-wrapper input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        outline: none;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2em;
+        color: #6c757d;
+    }
+    
+    .filter-select {
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1em;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .filter-select:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    
+    /* ============================================
+       BOUTONS D'ACTION
+       ============================================ */
+    .btn-add {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 12px 25px;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        transition: all 0.3s;
+    }
+    
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+    
+    .btn-refresh {
+        padding: 12px 20px;
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.2em;
+        transition: all 0.3s;
+    }
+    
+    .btn-refresh:hover {
+        border-color: #007bff;
+        color: #007bff;
+        transform: rotate(180deg);
+    }
+    
+    /* ============================================
+       TABLEAU
+       ============================================ */
+    .profiles-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .profile-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .profile-table thead {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    
+    .profile-table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #495057;
+        text-transform: uppercase;
+        font-size: 0.85em;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .profile-table td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+    }
+    
+    .profile-table tbody tr {
+        transition: all 0.2s;
+    }
+    
+    .profile-table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    /* Cellule avec photo */
+    .profile-cell {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .profile-thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #e9ecef;
+        flex-shrink: 0;
+        transition: transform 0.3s;
+    }
+    
+    .profile-thumb:hover {
+        transform: scale(1.3);
+        border-color: #007bff;
+    }
+    
+    .profile-thumb-placeholder {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        color: #adb5bd;
+        flex-shrink: 0;
+    }
+    
+    .profile-info {
+        flex: 1;
+    }
+    
+    .profile-name {
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 3px;
+        font-size: 1em;
+    }
+    
+    .profile-title {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+    
+    /* Cellule slug */
+    .slug-cell {
+        font-family: 'Courier New', monospace;
+        color: #007bff;
+        font-size: 0.9em;
+    }
+    
+    .slug-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #007bff;
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+    
+    .slug-link:hover {
+        background-color: #e7f3ff;
+        text-decoration: underline;
+    }
+    
+    /* Actions */
+    .actions-cell {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.85em;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+    
+    .action-btn-edit {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .action-btn-edit:hover {
+        background-color: #0056b3;
+        transform: translateY(-1px);
+    }
+    
+    .action-btn-design {
+        background-color: #6f42c1;
+        color: white;
+    }
+    
+    .action-btn-design:hover {
+        background-color: #5a32a3;
+        transform: translateY(-1px);
+    }
+    
+    .action-btn-qr {
+        background-color: #17a2b8;
+        color: white;
+    }
+    
+    .action-btn-qr:hover {
+        background-color: #138496;
+        transform: translateY(-1px);
+    }
+    
+    .action-btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .action-btn-delete:hover {
+        background-color: #c82333;
+        transform: translateY(-1px);
+    }
+    
+    /* ============================================
+       EMPTY STATE
+       ============================================ */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+    
+    .empty-state-icon {
+        font-size: 5em;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        color: #495057;
+        margin-bottom: 10px;
+    }
+    
+    .empty-state p {
+        margin-bottom: 25px;
+    }
+    
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 992px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .profile-table {
+            font-size: 0.9em;
+        }
+        
+        .actions-cell {
+            flex-direction: column;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .search-bar {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .search-input-wrapper {
+            width: 100%;
+        }
+        
+        /* Table responsive */
+        .profiles-table-container {
+            overflow-x: auto;
+        }
+        
+        .profile-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
+    
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .profiles-table-container {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    .stat-card {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header de page -->
+<div class="page-header">
+    <h1>👥 Gestion des Clients</h1>
+    <div class="header-actions">
+        <button class="btn-refresh" onclick="location.reload()" title="Actualiser">
+            🔄
+        </button>
+        <a href="{{ url_for('edition_profil', slug_profil='new-profile') }}" class="btn-add">
+            <span>➕</span>
+            <span>Nouveau Client</span>
+        </a>
+    </div>
+</div>
+
+<!-- Statistiques -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">👤</div>
+        <div class="stat-value">{{ profiles|length }}</div>
+        <div class="stat-label">Total Profils</div>
+    </div>
+    
+    <div class="stat-card success">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ profiles|selectattr('photo_url')|list|length }}</div>
+        <div class="stat-label">Avec Photo</div>
+    </div>
+    
+    <div class="stat-card info">
+        <div class="stat-icon">🔗</div>
+        <div class="stat-value">
+            {% set total_links = namespace(count=0) %}
+            {% for profile in profiles %}
+                {% set total_links.count = total_links.count + profile.liens|length %}
+            {% endfor %}
+            {{ total_links.count }}
+        </div>
+        <div class="stat-label">Total Liens</div>
+    </div>
+</div>
+
+<!-- Barre de recherche -->
+<div class="search-bar">
+    <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" 
+               id="searchInput" 
+               placeholder="Rechercher un profil par nom, titre ou slug..."
+               onkeyup="filterProfiles()">
+    </div>
+    
+    <select class="filter-select" id="sortSelect" onchange="sortProfiles()">
+        <option value="name-asc">Nom (A-Z)</option>
+        <option value="name-desc">Nom (Z-A)</option>
+        <option value="date-desc">Plus récent</option>
+        <option value="date-asc">Plus ancien</option>
+    </select>
+</div>
+
+<!-- Tableau des profils -->
+<div class="profiles-table-container">
+    {% if profiles %}
+    <table class="profile-table" id="profilesTable">
+        <thead>
+            <tr>
+                <th>Profil</th>
+                <th>Slug Public</th>
+                <th>Liens</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profil in profiles %}
+            <tr data-name="{{ profil.nom|lower }}" 
+                data-title="{{ profil.titre|lower }}" 
+                data-slug="{{ profil.slug|lower }}">
+                <td>
+                    <div class="profile-cell">
+                        {% if profil.photo_url %}
+                        <img src="{{ profil.photo_url }}" 
+                             alt="{{ profil.nom }}" 
+                             class="profile-thumb">
+                        {% else %}
+                        <div class="profile-thumb-placeholder">👤</div>
+                        {% endif %}
+                        
+                        <div class="profile-info">
+                            <div class="profile-name">{{ profil.nom or 'Sans nom' }}</div>
+                            {% if profil.titre %}
+                            <div class="profile-title">{{ profil.titre }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                
+                <td class="slug-cell">
+                    <a href="{{ url_for('profil_public', slug_profil=profil.slug) }}" 
+                       target="_blank" 
+                       class="slug-link"
+                       title="Voir le profil public">
+                        /{{ profil.slug }}
+                        <span>↗</span>
+                    </a>
+                </td>
+                
+                <td>
+                    <span style="background: #e7f3ff; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; color: #007bff;">
+                        {{ profil.liens|length }} lien{{ 's' if profil.liens|length > 1 else '' }}
+                    </span>
+                </td>
+                
+                <td>
+                    <div class="actions-cell">
+                        <a href="{{ url_for('edition_profil', slug_profil=profil.slug) }}" 
+                           class="action-btn action-btn-edit"
+                           title="Éditer le profil">
+                            ✏️ Éditer
+                        </a>
+                        
+                        <a href="{{ url_for('live_edit', slug_profil=profil.slug) }}" 
+                           class="action-btn action-btn-design"
+                           title="Personnaliser le design">
+                            🎨 Design
+                        </a>
+                        
+                        <a href="{{ url_for('qr_code_generator', slug_profil=profil.slug) }}" 
+                           target="_blank"
+                           class="action-btn action-btn-qr"
+                           title="Voir le QR Code">
+                            📱 QR
+                        </a>
+                        
+                        <form method="POST" 
+                              action="{{ url_for('delete_profile', slug_profil=profil.slug) }}" 
+                              style="display: inline;"
+                              onsubmit="return confirmDelete('{{ profil.nom }}')">
+                            <button type="submit" 
+                                    class="action-btn action-btn-delete"
+                                    title="Supprimer le profil">
+                                🗑️ Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <!-- État vide -->
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <h3>Aucun profil client</h3>
+        <p>Commencez par créer votre premier profil client</p>
+        <a href="{{ url_for('edition_profil', slug_profil='new-profile') }}" class="btn-add">
+            <span>➕</span>
+            <span>Créer mon premier profil</span>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Message si aucun résultat de recherche -->
+<div id="noResults" style="display: none; text-align: center; padding: 40px; color: #6c757d;">
+    <div style="font-size: 3em; margin-bottom: 15px;">🔍</div>
+    <h3>Aucun résultat trouvé</h3>
+    <p>Essayez de modifier votre recherche</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ============================================
+    // RECHERCHE ET FILTRAGE
+    // ============================================
+    function filterProfiles() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const table = document.getElementById('profilesTable');
+        const rows = table ? table.getElementsByTagName('tr') : [];
+        const noResults = document.getElementById('noResults');
+        let visibleCount = 0;
+        
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const name = row.getAttribute('data-name') || '';
+            const title = row.getAttribute('data-title') || '';
+            const slug = row.getAttribute('data-slug') || '';
+            
+            const searchText = name + ' ' + title + ' ' + slug;
+            
+            if (searchText.includes(searchTerm)) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+        
+        // Afficher/masquer le message "aucun résultat"
+        if (noResults) {
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+        if (table) {
+            table.parentElement.style.display = visibleCount === 0 ? 'none' : 'block';
+        }
+    }
+    
+    // ============================================
+    // TRI DES PROFILS
+    // ============================================
+    function sortProfiles() {
+        const table = document.getElementById('profilesTable');
+        if (!table) return;
+        
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const rows = Array.from(tbody.getElementsByTagName('tr'));
+        const sortValue = document.getElementById('sortSelect').value;
+        
+        rows.sort((a, b) => {
+            const nameA = a.getAttribute('data-name') || '';
+            const nameB = b.getAttribute('data-name') || '';
+            
+            switch(sortValue) {
+                case 'name-asc':
+                    return nameA.localeCompare(nameB);
+                case 'name-desc':
+                    return nameB.localeCompare(nameA);
+                case 'date-desc':
+                    return 1; // Ordre inverse (plus récent en premier)
+                case 'date-asc':
+                    return -1; // Ordre normal
+                default:
+                    return 0;
+            }
+        });
+        
+        // Réinsérer les lignes triées
+        rows.forEach(row => tbody.appendChild(row));
+    }
+    
+    // ============================================
+    // CONFIRMATION DE SUPPRESSION
+    // ============================================
+    function confirmDelete(profileName) {
+        return confirm(`⚠️ Êtes-vous sûr de vouloir supprimer le profil de "${profileName}" ?\n\nCette action est irréversible.`);
+    }
+    
+    // ============================================
+    // RACCOURCIS CLAVIER
+    // ============================================
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + K pour focus sur la recherche
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('searchInput').focus();
+        }
+        
+        // Ctrl/Cmd + N pour nouveau profil
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+            e.preventDefault();
+            window.location.href = "{{ url_for('edition_profil', slug_profil='new-profile') }}";
+        }
+    });
+    
+    // ============================================
+    // HIGHLIGHT RECHERCHE
+    // ============================================
+    document.getElementById('searchInput')?.addEventListener('input', function() {
+        if (this.value) {
+            this.style.borderColor = '#007bff';
+        } else {
+            this.style.borderColor = '#e9ecef';
+        }
+    });
+    
+    // ============================================
+    // MESSAGES FLASH AUTO-DISMISS
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(100%)';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
+    });
+</script>
+{% endblock %}

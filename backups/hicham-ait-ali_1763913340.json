@@ -1,0 +1,17 @@
+{
+    "id": 1,
+    "slug": "hicham-ait-ali",
+    "nom": "HICHAM AIT ALI",
+    "titre": "Agent de sécurité",
+    "biographie": "Professionnel motivé et polyvalent, je suis déterminé à mettre mes compétences au service d’une équipe dynamique. Curieux, rigoureux et orienté résultats, je m’adapte rapidement et m’investis pleinement pour atteindre les objectifs fixés et contribuer au succès de l’entreprise. Motivé par le désir d’évoluer, je cherche un poste stimulant. ",
+    "email": "hicham.aitali.pro@gmail.com",
+    "telephone": "0621292937",
+    "photo_url": "/static/uploads/f47368cc987f4665b1fe16fda598be1e_avtr-0-1000-0-1000-crop.jpg",
+    "couleur_principale": "#001F3F",
+    "couleur_fond": "#E9ECEF",
+    "couleur_texte_h1": "#001F3F",
+    "couleur_texte_bio": "#444444",
+    "photo_position_x": "50%",
+    "photo_position_y": "50%",
+    "liens": []
+}

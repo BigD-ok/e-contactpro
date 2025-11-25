@@ -1,282 +1,1037 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Édition des Informations</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% extends "base_admin.html" %}
+
+{% block title %}
+    {% if profil %}
+        Édition - {{ profil.nom }} - E-Contact Pro
+    {% else %}
+        Nouveau Profil - E-Contact Pro
+    {% endif %}
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* ============================================
+       VARIABLES & RESET
+       ============================================ */
+    * {
+        box-sizing: border-box;
+    }
     
-    <style>
-        /* Styles CSS critiques pour cette page spécifique */
-        body {
-            display: flex; 
-            justify-content: center; /* Centre le contenu horizontalement */
-            align-items: flex-start; /* Aligne en haut */
-            min-height: 100vh;
-            padding: 40px 20px; 
-            background-color: #f4f6f9; /* Fond clair */
-            margin: 0;
-            font-family: sans-serif; /* Remplacé par sans-serif pour être sûr */
+    /* ============================================
+       PAGE LAYOUT
+       ============================================ */
+    .edition-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        margin-bottom: 35px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #e2e8f0;
+    }
+    
+    .page-header h1 {
+        font-size: 2.3em;
+        color: #2d3748;
+        margin-bottom: 10px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .page-subtitle {
+        color: #718096;
+        font-size: 1.05em;
+        margin-top: 10px;
+    }
+    
+    /* ============================================
+       CARD CONTAINER
+       ============================================ */
+    .profil-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+    
+    .profil-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px 30px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+    
+    .card-header-icon {
+        font-size: 1.8em;
+    }
+    
+    .card-body {
+        padding: 35px;
+    }
+    
+    /* ============================================
+       FORM ELEMENTS
+       ============================================ */
+    .form-section {
+        margin-bottom: 40px;
+    }
+    
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .section-title {
+        font-size: 1.4em;
+        color: #2d3748;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 10px;
+        font-size: 0.95em;
+    }
+    
+    .form-group label .required {
+        color: #e53e3e;
+        margin-left: 4px;
+    }
+    
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        font-family: 'Roboto', sans-serif;
+        background: white;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        background: #fefefe;
+    }
+    
+    .form-group textarea {
+        min-height: 140px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+    
+    .form-help {
+        display: block;
+        margin-top: 8px;
+        font-size: 0.88em;
+        color: #718096;
+    }
+    
+    .char-counter {
+        text-align: right;
+        font-size: 0.85em;
+        color: #a0aec0;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+    
+    .char-counter.warning {
+        color: #ed8936;
+    }
+    
+    .char-counter.danger {
+        color: #e53e3e;
+    }
+    
+    /* ============================================
+       PHOTO UPLOAD SECTION
+       ============================================ */
+    .photo-upload-container {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border: 3px dashed #cbd5e0;
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .photo-upload-container:hover {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+    }
+    
+    .photo-preview-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 25px;
+    }
+    
+    .photo-preview {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid white;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+    
+    .photo-preview:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    }
+    
+    .photo-placeholder {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5em;
+        color: white;
+        border: 5px solid white;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        margin: 0 auto 25px;
+    }
+    
+    .photo-upload-label {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 14px 35px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        font-size: 1.05em;
+    }
+    
+    .photo-upload-label:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+    
+    .photo-upload-label:active {
+        transform: translateY(-1px);
+    }
+    
+    input[type="file"] {
+        display: none;
+    }
+    
+    .photo-info {
+        margin-top: 20px;
+        color: #718096;
+        font-size: 0.92em;
+        line-height: 1.6;
+    }
+    
+    /* ============================================
+       LINKS MANAGEMENT
+       ============================================ */
+    .links-section {
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 30px;
+    }
+    
+    .links-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .links-header h3 {
+        font-size: 1.3em;
+        color: #2d3748;
+        margin: 0;
+    }
+    
+    .links-list {
+        display: grid;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .link-item {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        cursor: move;
+    }
+    
+    .link-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .link-item.dragging {
+        opacity: 0.5;
+        cursor: grabbing;
+    }
+    
+    .link-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .link-drag-handle {
+        font-size: 1.5em;
+        color: #cbd5e0;
+        cursor: grab;
+    }
+    
+    .link-drag-handle:active {
+        cursor: grabbing;
+    }
+    
+    .link-icon {
+        font-size: 2em;
+    }
+    
+    .link-info {
+        flex: 1;
+    }
+    
+    .link-type {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 5px 14px;
+        border-radius: 8px;
+        font-size: 0.85em;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    
+    .link-url {
+        color: #718096;
+        font-size: 0.92em;
+        word-break: break-all;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .link-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn-delete-link {
+        background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(252, 129, 129, 0.3);
+    }
+    
+    .btn-delete-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(252, 129, 129, 0.4);
+    }
+    
+    .empty-links {
+        text-align: center;
+        padding: 60px 20px;
+        color: #a0aec0;
+    }
+    
+    .empty-links-icon {
+        font-size: 5em;
+        margin-bottom: 20px;
+        opacity: 0.4;
+    }
+    
+    .empty-links h3 {
+        color: #718096;
+        font-size: 1.3em;
+        margin-bottom: 10px;
+    }
+    
+    .empty-links p {
+        color: #a0aec0;
+    }
+    
+    /* ============================================
+       ADD LINK FORM
+       ============================================ */
+    .add-link-card {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 25px;
+    }
+    
+    .add-link-card h4 {
+        font-size: 1.2em;
+        color: #2d3748;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
         }
-        .profil-container {
-            max-width: 650px; 
-            width: 100%;
-            background-color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border-radius: 16px;
-            padding: 30px;
+    }
+    
+    /* ============================================
+       BUTTONS
+       ============================================ */
+    .btn-primary {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 16px 40px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.15em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+    }
+    
+    .btn-primary:active {
+        transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 28px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .save-section {
+        text-align: center;
+        margin-top: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border-radius: 12px;
+    }
+    
+    /* ============================================
+       DARK MODE
+       ============================================ */
+    body.dark-mode .profil-card {
+        background-color: #2d2d2d;
+    }
+    
+    body.dark-mode .card-body {
+        background-color: #2d2d2d;
+    }
+    
+    body.dark-mode .section-title {
+        color: #f0f0f0;
+        border-bottom-color: #404040;
+    }
+    
+    body.dark-mode .form-group label {
+        color: #d0d0d0;
+    }
+    
+    body.dark-mode .form-group input,
+    body.dark-mode .form-group textarea,
+    body.dark-mode .form-group select {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        border-color: #404040;
+    }
+    
+    body.dark-mode .form-group input:focus,
+    body.dark-mode .form-group textarea:focus,
+    body.dark-mode .form-group select:focus {
+        background-color: #242424;
+        border-color: #667eea;
+    }
+    
+    body.dark-mode .photo-upload-container {
+        background: linear-gradient(135deg, #242424 0%, #1a1a1a 100%);
+        border-color: #404040;
+    }
+    
+    body.dark-mode .links-section {
+        background-color: #242424;
+    }
+    
+    body.dark-mode .link-item {
+        background-color: #1a1a1a;
+        border-color: #404040;
+    }
+    
+    body.dark-mode .link-item:hover {
+        border-color: #667eea;
+    }
+    
+    body.dark-mode .add-link-card {
+        background-color: #1a1a1a;
+        border-color: #404040;
+    }
+    
+    body.dark-mode .save-section {
+        background: linear-gradient(135deg, #242424 0%, #1a1a1a 100%);
+    }
+    
+    body.dark-mode .page-header {
+        border-bottom-color: #404040;
+    }
+    
+    body.dark-mode .page-header h1 {
+        color: #f0f0f0;
+    }
+    
+    body.dark-mode .page-subtitle {
+        color: #adb5bd;
+    }
+    
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
         }
-        
-        /* Styles du Formulaire */
-        .form-group-pair {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .form-group-pair label, .form-group-pair input, .form-group-pair select {
-            width: 100%;
+    }
+    
+    .profil-card {
+        animation: slideInUp 0.5s ease-out;
+    }
+    
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 992px) {
+        .form-grid {
+            grid-template-columns: 1fr;
         }
-        .form-group-pair div {
-            margin-bottom: 0 !important;
-        }
-        .form-group-full {
-            margin-bottom: 20px;
-        }
-        .link-management-section {
-            border: 1px solid #dee2e6;
+    }
+    
+    @media (max-width: 768px) {
+        .edition-container {
             padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            background-color: #ffffff;
         }
-        .sidebar-link-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 5px;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 0.9em;
-            cursor: move;
-            background-color: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        /* Styles pour masquer le champ nom du lien par défaut */
-        #link-name-group {
-            display: none;
-        }
-        /* Style pour placer le bouton d'action finale */
-        .action-button-final {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #dee2e6;
-        }
-        /* Style pour l'aperçu de la photo sur la page d'édition */
-        .preview-thumb-container {
-            text-align: center; 
-            margin-bottom: 10px;
-        }
-        .preview-thumb {
-            width: 100px; 
-            height: 100px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            border: 2px solid #ddd;
-        }
-    </style>
-</head>
-<body>
-    <div class="profil-container"> 
-        <h1>Édition des Informations</h1>
-        <p style="color: #6c757d;">Saisissez ici les données de base de votre profil.</p>
-
-        <div style="margin-bottom: 20px;">
-            <a href="/profiles" style="color: #03a9f4; text-decoration: none; font-weight: bold;">← Retour à la Liste des Profils</a>
-        </div>
         
-        <form method="POST" action="{{ url_for('edition_profil', slug_profil=profil.slug) }}" enctype="multipart/form-data" id="main-data-form">
-            
-            <div class="form-group-pair">
-                <div>
-                    <label for="nom">Nom Complet</label>
-                    <input type="text" id="nom" name="nom" value="{{ profil.nom }}" required>
-                </div>
-                <div>
-                    <label for="titre">Titre / Poste</label>
-                    <input type="text" id="titre" name="titre" value="{{ profil.titre }}">
-                </div>
-            </div>
-            
-            <div class="form-group-full">
-                <label for="bio">Biographie (350 caractères maximum)</label>
-                <textarea id="bio" name="biographie" maxlength="350">{{ profil.biographie }}</textarea>
-            </div>
-            
-            <div class="form-group-pair">
-                <div>
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="{{ profil.email }}">
-                </div>
-                <div>
-                    <label for="telephone">Téléphone</label>
-                    <input type="text" id="telephone" name="telephone" value="{{ profil.telephone }}">
-                </div>
-            </div>
-
-            <div class="form-group-full">
-                {% if profil.photo_url %}
-                    <div class="preview-thumb-container">
-                        <img src="{{ profil.photo_url }}" alt="Photo de Profil Actuelle" class="preview-thumb">
-                    </div>
-                {% endif %}
-                
-                <label for="photo_file">Télécharger Photo de Profil</label>
-                <input type="file" id="photo_file" name="photo_file" accept="image/*">
-                
-                <p style="margin-top: 5px; font-size: 0.9em; color: #6c757d;">
-                    URL Photo Actuelle : 
-                    {% if profil.photo_url %}
-                        <a href="{{ profil.photo_url }}" target="_blank">{{ profil.photo_url.split('/')[-1] }}</a>
-                    {% else %}
-                        Aucune
-                    {% endif %}
-                </p>
-                <input type="hidden" name="photo_url" value="{{ profil.photo_url }}">
-            </div>
-            
-            <button type="submit" class="btn principal" style="width: 100%; margin-bottom: 20px;" formaction="{{ url_for('edition_profil', slug_profil=profil.slug) }}">
-                Enregistrer
-            </button>
-
-            </form>
+        .page-header h1 {
+            font-size: 1.8em;
+        }
         
-        <hr>
+        .card-body {
+            padding: 25px 20px;
+        }
+        
+        .photo-preview,
+        .photo-placeholder {
+            width: 140px;
+            height: 140px;
+        }
+        
+        .link-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .link-actions {
+            width: 100%;
+        }
+        
+        .btn-delete-link {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edition-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            {% if profil %}
+                ✏️ Édition du profil
+            {% else %}
+                ➕ Créer un nouveau profil
+            {% endif %}
+        </h1>
+        <p class="page-subtitle">
+            {% if profil %}
+                Modifiez les informations du profil de <strong>{{ profil.nom }}</strong>
+            {% else %}
+                Remplissez les informations pour créer une nouvelle carte de visite numérique
+            {% endif %}
+        </p>
+    </div>
     
-        <div class="link-management-section">
-            <h3 style="font-size: 1.2em;">Gestion des Liens Externes (Glisser-Déposer pour Trier)</h3>
-            
-            <div id="sortable-list">
-                {% for lien in all_links %}
-                    <div class="sidebar-link-item" data-id="{{ lien.id }}">
-                        
-                        <span style="flex-grow: 1;">
-                            <img src="{{ get_icon(lien.type_lien) }}" alt="{{ lien.type_lien }}" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 5px;"> 
-                            {{ lien.nom }}
-                        </span>
-                        
-                        <div class="link-item-controls">
-                            <form method="POST" action="{{ url_for('gerer_liens') }}" style="display: inline-block;">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="lien_id" value="{{ lien.id }}">
-                                <input type="hidden" name="profil_slug" value="{{ profil.slug }}"> 
-                                <button type="submit" class="delete-btn" title="Supprimer" style="background: none; border: none; color: red; font-weight: bold; cursor: pointer; padding: 0;">&times;</button>
-                            </form>
+    <!-- Main Form -->
+    <form method="POST" enctype="multipart/form-data">
+        
+        <!-- Informations Personnelles -->
+        <div class="profil-card">
+            <div class="card-header">
+                <span class="card-header-icon">👤</span>
+                <h2>Informations Personnelles</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nom">
+                            Nom Complet <span class="required">*</span>
+                        </label>
+                        <input type="text" 
+                               id="nom" 
+                               name="nom" 
+                               value="{{ profil.nom if profil else '' }}" 
+                               required 
+                               maxlength="100"
+                               placeholder="Ex: Jean Dupont">
+                        <div class="char-counter" id="nom-counter">
+                            <span id="nom-count">{{ profil.nom|length if profil and profil.nom else 0 }}</span>/100
                         </div>
                     </div>
-                {% endfor %}
-            </div>
-            <form method="POST" action="{{ url_for('gerer_liens') }}" id="form-lien-add" style="margin-top: 15px;">
-                <input type="hidden" name="action" value="add">
-                <input type="hidden" name="profil_slug" value="{{ profil.slug }}">
-                
-                <label for="type_lien">Type de Réseau/Lien</label>
-                <select id="type_lien" name="type_lien" required onchange="toggleLinkNameEdit()">
-                    <option value="LinkedIn">LinkedIn</option>
-                    <option value="YouTube">YouTube</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="Twitter">Twitter</option>
-                    <option value="Linktree">Linktree</option>
-                    <option value="Autre">Autre (Saisie Manuelle)</option>
-                </select>
-                
-                <div id="link-name-group" style="margin-top: 15px;">
-                    <label for="nom_lien">Nom du lien (Si 'Autre' choisi)</label>
-                    <input type="text" id="nom_lien" name="nom_lien" placeholder="Ex: Mon site / Nom si 'Autre' choisi">
+                    
+                    <div class="form-group">
+                        <label for="titre">Titre / Poste</label>
+                        <input type="text" 
+                               id="titre" 
+                               name="titre" 
+                               value="{{ profil.titre if profil else '' }}" 
+                               maxlength="100"
+                               placeholder="Ex: Développeur Web Full-Stack">
+                    </div>
                 </div>
                 
-                <label for="url_lien" style="margin-top: 15px;">URL complète</label>
-                    <input type="url" id="url_lien" name="url_lien" placeholder="Ex: https://instagram.com/..." required>
-                
-                <button type="submit" class="btn principal" style="width: 100%; margin-top: 15px;">+ Ajouter le Lien</button>
-            </form>
+                <div class="form-group">
+                    <label for="biographie">Biographie</label>
+                    <textarea id="biographie" 
+                              name="biographie" 
+                              maxlength="500"
+                              placeholder="Présentez-vous en quelques lignes... (max 500 caractères)">{{ profil.biographie if profil else '' }}</textarea>
+                    <div class="char-counter" id="bio-counter">
+                        <span id="bio-count">{{ profil.biographie|length if profil and profil.biographie else 0 }}</span>/500
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div class="action-button-final">
-             <a href="{{ url_for('live_edit', slug_profil=profil.slug) }}" class="btn" style="width: 100%; background-color: #007bff; border-color: #007bff; color: white;">Aller à l'Éditeur de Design</a>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script>
-        // Fonction pour cacher/afficher le champ de nom de lien
-        function toggleLinkNameEdit() {
-            var select = document.getElementById('type_lien');
-            var group = document.getElementById('link-name-group');
-            var nomInput = document.getElementById('nom_lien');
-            
-            if (select.value === 'Autre') {
-                group.style.display = 'block';
-                nomInput.required = true; 
-            } else {
-                group.style.display = 'none';
-                nomInput.required = false;
-                nomInput.value = ''; 
-            }
-        }
-        document.addEventListener('DOMContentLoaded', toggleLinkNameEdit);
-
-
-        // --- LOGIQUE SORTABLEJS POUR LE GLISSER-DÉPOSER ---
-        
-        var sortableList = document.getElementById('sortable-list');
-        var profilSlug = "{{ profil.slug }}"; // Récupère le slug du profil
-        var apiUrl = "{{ url_for('update_link_order') }}"; // L'URL de la nouvelle route
-
-        if (sortableList) {
-            new Sortable(sortableList, {
-                animation: 150,
-                ghostClass: 'sortable-ghost',
-                handle: '.sidebar-link-item', // Permet de cliquer n'importe où sur l'élément pour le déplacer
-                
-                onEnd: function (evt) {
-                    var linkIds = [];
-                    // Parcourt la nouvelle liste pour récupérer les IDs dans l'ordre
-                    sortableList.querySelectorAll('.sidebar-link-item').forEach(item => {
-                        linkIds.push(item.getAttribute('data-id'));
-                    });
+        <!-- Informations de Contact -->
+        <div class="profil-card">
+            <div class="card-header">
+                <span class="card-header-icon">📧</span>
+                <h2>Informations de Contact</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="email">Adresse Email</label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               value="{{ profil.email if profil else '' }}"
+                               placeholder="exemple@email.com">
+                        <span class="form-help">📌 Sera affiché sur votre profil public</span>
+                    </div>
                     
-                    // Envoie la nouvelle liste d'IDs au serveur (requête POST JSON)
-                    fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ link_ids: linkIds, profil_slug: profilSlug }),
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erreur de serveur: ' + response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            console.log("Ordre des liens mis à jour avec succès.");
-                            // Recharge la page pour afficher l'ordre final
-                            window.location.reload(); 
-                        } else {
-                            alert("Erreur lors de la mise à jour de l'ordre: " + data.error);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Erreur:', error);
-                        alert("Erreur de connexion au serveur lors du tri.");
-                    });
-                },
-            });
+                    <div class="form-group">
+                        <label for="telephone">Numéro de Téléphone</label>
+                        <input type="tel" 
+                               id="telephone" 
+                               name="telephone" 
+                               value="{{ profil.telephone if profil else '' }}"
+                               placeholder="+33 6 12 34 56 78">
+                        <span class="form-help">📱 Format international recommandé</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Photo de Profil -->
+        <div class="profil-card">
+            <div class="card-header">
+                <span class="card-header-icon">📷</span>
+                <h2>Photo de Profil</h2>
+            </div>
+            <div class="card-body">
+                <div class="photo-upload-container">
+                    <div class="photo-preview-wrapper">
+                        {% if profil and profil.photo_url %}
+                            <img src="{{ profil.photo_url }}" 
+                                 alt="Photo de profil" 
+                                 class="photo-preview" 
+                                 id="photo-preview">
+                        {% else %}
+                            <div class="photo-placeholder" id="photo-placeholder">
+                                👤
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <label for="photo" class="photo-upload-label">
+                        📸 Choisir une photo
+                    </label>
+                    <input type="file" 
+                           id="photo" 
+                           name="photo" 
+                           accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
+                    
+                    <div class="photo-info">
+                        <p>ℹ️ <strong>Formats acceptés :</strong> PNG, JPG, GIF, WEBP</p>
+                        <p><strong>Taille maximale :</strong> 16 MB</p>
+                        <p><strong>Recommandation :</strong> Image carrée de 500x500px minimum</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gestion des Liens -->
+        {% if profil %}
+        <div class="profil-card">
+            <div class="card-header">
+                <span class="card-header-icon">🔗</span>
+                <h2>Liens Externes & Réseaux Sociaux</h2>
+            </div>
+            <div class="card-body">
+                <div class="links-section">
+                    <!-- Liste des liens existants -->
+                    <div class="links-list" id="links-list">
+                        {% if profil.liens %}
+                            {% for lien in profil.liens|sort(attribute='link_order') %}
+                            <div class="link-item" data-link-id="{{ lien.id }}" draggable="true">
+                                <div class="link-content">
+                                    <span class="link-drag-handle">⋮⋮</span>
+                                    <span class="link-icon">🔗</span>
+                                    <div class="link-info">
+                                        <span class="link-type">{{ lien.type_lien }}</span>
+                                        <div class="link-url">{{ lien.url }}</div>
+                                    </div>
+                                </div>
+                                <div class="link-actions">
+                                    <form method="POST" action="{{ url_for('gerer_liens') }}" style="display: inline;">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="lien_id" value="{{ lien.id }}">
+                                        <input type="hidden" name="profil_slug" value="{{ profil.slug }}">
+                                        <button type="submit" 
+                                                class="btn-delete-link" 
+                                                onclick="return confirm('⚠️ Supprimer ce lien ?')">
+                                            🗑️ Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-links">
+                                <div class="empty-links-icon">🔗</div>
+                                <h3>Aucun lien ajouté</h3>
+                                <p>Commencez par ajouter vos liens de réseaux sociaux ci-dessous</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Formulaire d'ajout -->
+                    <div class="add-link-card">
+                        <h4>➕ Ajouter un nouveau lien</h4>
+                        <form method="POST" action="{{ url_for('gerer_liens') }}">
+                            <input type="hidden" name="action" value="add">
+                            <input type="hidden" name="profil_slug" value="{{ profil.slug }}">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="type_lien">Type de lien</label>
+                                    <select id="type_lien" name="type_lien" required>
+                                        <option value="LinkedIn">🔵 LinkedIn</option>
+                                        <option value="Facebook">📘 Facebook</option>
+                                        <option value="Twitter">🐦 Twitter / X</option>
+                                        <option value="Instagram">📷 Instagram</option>
+                                        <option value="TikTok">🎵 TikTok</option>
+                                        <option value="YouTube">📺 YouTube</option>
+                                        <option value="GitHub">💻 GitHub</option>
+                                        <option value="Website">🌐 Site Web</option>
+                                        <option value="WhatsApp">💬 WhatsApp</option>
+                                        <option value="Telegram">✈️ Telegram</option>
+                                        <option value="Discord">🎮 Discord</option>
+                                        <option value="Twitch">🎮 Twitch</option>
+                                        <option value="Snapchat">👻 Snapchat</option>
+                                        <option value="Pinterest">📌 Pinterest</option>
+                                        <option value="Autre">🔗 Autre</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="url">URL complète</label>
+                                    <input type="url" 
+                                           id="url" 
+                                           name="url" 
+                                           required 
+                                           placeholder="https://exemple.com/votre-profil">
+                                    <span class="form-help">💡 Incluez le https://</span>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn-secondary" style="width: 100%;">
+                                ➕ Ajouter ce lien
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Save Section -->
+        <div class="save-section">
+            <button type="submit" class="btn-primary">
+                💾 Enregistrer les modifications
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ============================================
+    // CHARACTER COUNTERS
+    // ============================================
+    const nomInput = document.getElementById('nom');
+    const nomCount = document.getElementById('nom-count');
+    const nomCounter = document.getElementById('nom-counter');
+    
+    const bioInput = document.getElementById('biographie');
+    const bioCount = document.getElementById('bio-count');
+    const bioCounter = document.getElementById('bio-counter');
+    
+    nomInput.addEventListener('input', function() {
+        const length = this.value.length;
+        nomCount.textContent = length;
+        
+        if (length > 90) {
+            nomCounter.classList.add('danger');
+            nomCounter.classList.remove('warning');
+        } else if (length > 80) {
+            nomCounter.classList.add('warning');
+            nomCounter.classList.remove('danger');
+        } else {
+            nomCounter.classList.remove('warning', 'danger');
         }
-    </script>
-</body>
-</html>
+    });
+    
+    bioInput.addEventListener('input', function() {
+        const length = this.value.length;
+        bioCount.textContent = length;
+        
+        if (length > 450) {
+            bioCounter.classList.add('danger');
+            bioCounter.classList.remove('warning');
+        } else if (length > 400) {
+            bioCounter.classList.add('warning');
+            bioCounter.classList.remove('danger');
+        } else {
+            bioCounter.classList.remove('warning', 'danger');
+        }
+    });
+    
+    // ============================================
+    // PHOTO PREVIEW
+    // ============================================
+    document.getElementById('photo').addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const placeholder = document.getElementById('photo-placeholder');
+                const preview = document.getElementById('photo-preview');
+                
+                if (placeholder) {
+                    placeholder.outerHTML = '<img src="' + event.target.result + '" alt="Photo de profil" class="photo-preview" id="photo-preview">';
+                } else if (preview) {
+                    preview.src = event.target.result;
+                }
+            };
+            
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+    
+    // ============================================
+    // DRAG & DROP FOR LINKS
+    // ============================================
+    {% if profil and profil.liens %}
+    const linksList = document.getElementById('links-list');
+    let draggedElement = null;
+    
+    const linkItems = document.querySelectorAll('.link-item');
+    
+    linkItems.forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        
+        item.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+            updateLinkOrder();
+        });
+        
+        item.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const afterElement = getDragAfterElement(linksList, e.clientY);
+            if (afterElement == null) {
+                linksList.appendChild(draggedElement);
+            } else {
+                linksList.insertBefore(draggedElement, afterElement);
+            }
+        });
+    });
+    
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.link-item:not(.dragging)')];
+        
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+    
+    function updateLinkOrder() {
+        const linkItems = Array.from(document.querySelectorAll('.link-item'));
+        const linkIds = linkItems.map(item => item.dataset.linkId);
+        
+        fetch('{{ url_for("update_link_order") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                link_ids: linkIds,
+                profil_slug: '{{ profil.slug }}'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Ordre mis à jour');
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+    }
+    {% endif %}
+    
+    // ============================================
+    // FORM VALIDATION
+    // ============================================
+    document.querySelector('form[method="POST"][enctype="multipart/form-data"]').addEventListener('submit', function(e) {
+        const nomValue = document.getElementById('nom').value.trim();
+        
+        if (!nomValue) {
+            e.preventDefault();
+            alert('⚠️ Le nom est obligatoire !');
+            document.getElementById('nom').focus();
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = this.querySelector('.btn-primary');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Enregistrement en cours...';
+    });
+</script>
+{% endblock %}

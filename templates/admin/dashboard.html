@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - E-Contact Pro</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.05em;
+            color: #7f8c8d;
+        }
+
+        .btn-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #26de81 0%, #20c997 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(38, 222, 129, 0.3);
+        }
+
+        .btn-new:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(38, 222, 129, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95em;
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .profils-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profils-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .profil-card {
+            background: #f9fafb;
+            border: 2px solid #e8eef5;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .profil-card:hover {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .profil-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .profil-title {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .profil-email {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+
+        .profil-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 90px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-view {
+            background: #007bff;
+            color: white;
+        }
+
+        .action-view:hover {
+            background: #0056b3;
+        }
+
+        .action-edit {
+            background: #667eea;
+            color: white;
+        }
+
+        .action-edit:hover {
+            background: #764ba2;
+        }
+
+        .action-delete {
+            background: #f5576c;
+            color: white;
+            border: none;
+        }
+
+        .action-delete:hover {
+            background: #d63447;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .profils-grid {
+                grid-template-columns: 1fr;
+            }
+            .profil-actions {
+                flex-direction: column;
+            }
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>📊 E-Contact Pro - Admin</h1>
+        <div class="navbar-links">
+            <a href="{{ url_for('index') }}">🏠 Accueil</a>
+            <a href="{{ url_for('admin_logout') }}">🚪 Déconnexion</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Bienvenue, Admin ! 👋</h1>
+            <p>Gérez vos profils E-Contact</p>
+            <a href="{{ url_for('create_profil') }}" class="btn-new">
+                <span>➕</span>
+                <span>Créer un Profil</span>
+            </a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-title">Total de Profils</div>
+                <div class="stat-number">{{ profils|length }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-title">Actifs</div>
+                <div class="stat-number">{{ profils|length }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-title">Status</div>
+                <div class="stat-number" style="color: #26de81;">●</div>
+            </div>
+        </div>
+
+        <div class="profils-section">
+            <h2 class="section-title">📌 Mes Profils</h2>
+
+            {% if profils %}
+            <div class="profils-grid">
+                {% for profil in profils %}
+                <div class="profil-card">
+                    <div class="profil-name">{{ profil.nom }}</div>
+                    <div class="profil-title">{{ profil.titre or '---' }}</div>
+                    <div class="profil-email">{{ profil.email or '---' }}</div>
+                    
+                    <div class="profil-actions">
+                        <a href="{{ url_for('profil_public', slug_profil=profil.slug) }}" class="action-btn action-view" target="_blank">
+                            👁️ Voir
+                        </a>
+                        <a href="{{ url_for('edit_profil', slug_profil=profil.slug) }}" class="action-btn action-edit">
+                            ✏️ Éditer
+                        </a>
+                        <form method="POST" action="{{ url_for('delete_profil', slug_profil=profil.slug) }}" style="flex: 1; min-width: 90px;">
+                            <button type="submit" class="action-btn action-delete" onclick="return confirm('Êtes-vous sûr ?')">
+                                🗑️ Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📂</div>
+                <div class="empty-title">Aucun profil créé</div>
+                <p class="empty-text">Commencez par créer votre premier profil E-Contact</p>
+                <a href="{{ url_for('create_profil') }}" class="btn-new">
+                    <span>➕</span>
+                    <span>Créer mon premier profil</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

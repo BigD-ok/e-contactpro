@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Contact Pro - Cartes de Visite Numériques</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-admin {
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .btn-admin:hover {
+            background: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3em;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profils-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profil-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .profil-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(102, 126, 234, 0.2);
+        }
+
+        .profil-photo {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            color: white;
+        }
+
+        .profil-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profil-info {
+            padding: 20px;
+        }
+
+        .profil-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .profil-title {
+            color: #7f8c8d;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+        }
+
+        .profil-bio {
+            color: #95a5a6;
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .profil-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .profil-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .empty-text {
+            color: #7f8c8d;
+            font-size: 1.05em;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .profils-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🚀 E-Contact Pro</h1>
+        <div class="navbar-links">
+            <a href="{{ url_for('admin_login') }}" class="btn-admin">🔐 Admin</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Cartes de Visite Numériques</h1>
+            <p>Créez votre profil professionnel en quelques secondes et partagez-le avec le monde entier</p>
+        </div>
+
+        {% if profils %}
+        <div class="profils-grid">
+            {% for profil in profils %}
+            <div class="profil-card">
+                <div class="profil-photo">
+                    {% if profil.photo_url %}
+                        <img src="{{ profil.photo_url }}" alt="{{ profil.nom }}">
+                    {% else %}
+                        👤
+                    {% endif %}
+                </div>
+                <div class="profil-info">
+                    <div class="profil-name">{{ profil.nom }}</div>
+                    {% if profil.titre %}
+                    <div class="profil-title">{{ profil.titre }}</div>
+                    {% endif %}
+                    {% if profil.biographie %}
+                    <div class="profil-bio">{{ profil.biographie }}</div>
+                    {% endif %}
+                    <a href="{{ url_for('profil_public', slug_profil=profil.slug) }}" class="profil-link">
+                        Voir le profil →
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📂</div>
+            <div class="empty-title">Aucun profil créé</div>
+            <p class="empty-text">Commencez par créer votre premier profil E-Contact</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+    "id": 2,
+    "slug": "wissam-el-sharkawi",
+    "nom": "wissam el sharkawi",
+    "titre": "agent militaire privée",
+    "biographie": "je tue.",
+    "email": "",
+    "telephone": "",
+    "photo_url": "/static/uploads/e4afd2a3a6cb4b678a62f88bee2f0243_Capture_decran_2023-12-31_025830.png",
+    "couleur_principale": "#001F3F",
+    "couleur_fond": "#E9ECEF",
+    "couleur_texte_h1": "#001F3F",
+    "couleur_texte_bio": "#444444",
+    "photo_position_x": "50%",
+    "photo_position_y": "50%",
+    "liens": []
+}

@@ -1,0 +1,36 @@
+# Environnement
+.env
+.venv
+env/
+venv/
+
+# Base de données
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.txt
