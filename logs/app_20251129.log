@@ -1,0 +1,8 @@
+2025-11-29 02:40:45,975 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-29 02:40:46,115 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-29 02:40:46,115 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-29 02:40:46,134 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-29 02:40:48,292 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-29 02:40:48,292 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-29 02:40:48,306 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-29 02:43:27,325 - e-contactpro - INFO - Image optimisée: hicham-test_1764377007.222215.png

@@ -1,0 +1,176 @@
+2025-12-06 11:59:43 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 11:59:44 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 11:59:44 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 11:59:44 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 11:59:44 - e-contactpro - WARNING - [run_server.py:26] - ⚠️ SECRET_KEY par défaut détectée - Changez-la en production!
+2025-12-06 11:59:44 - e-contactpro - INFO - [run_server.py:29] - 🚀 Lancement du serveur sur http://0.0.0.0:5000
+2025-12-06 11:59:44 - e-contactpro - INFO - [run_server.py:30] - 📊 Mode: Production
+2025-12-06 11:59:44 - e-contactpro - INFO - [run_server.py:31] - 🔒 CSRF Protection: Activée
+2025-12-06 11:59:44 - e-contactpro - INFO - [run_server.py:32] - ⏱️ Rate Limiting: Activé
+2025-12-06 12:07:48 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:07:48 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:07:48 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:07:48 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:07:48 - e-contactpro - WARNING - [run_server.py:26] - ⚠️ SECRET_KEY par défaut détectée - Changez-la en production!
+2025-12-06 12:07:48 - e-contactpro - INFO - [run_server.py:29] - 🚀 Lancement du serveur sur http://0.0.0.0:5000
+2025-12-06 12:07:48 - e-contactpro - INFO - [run_server.py:30] - 📊 Mode: Production
+2025-12-06 12:07:48 - e-contactpro - INFO - [run_server.py:31] - 🔒 CSRF Protection: Activée
+2025-12-06 12:07:48 - e-contactpro - INFO - [run_server.py:32] - ⏱️ Rate Limiting: Activé
+2025-12-06 12:08:32 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:08:33 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:08:33 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:08:33 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:08:33 - e-contactpro - WARNING - [run_server.py:26] - ⚠️ SECRET_KEY par défaut détectée - Changez-la en production!
+2025-12-06 12:08:33 - e-contactpro - INFO - [run_server.py:29] - 🚀 Lancement du serveur sur http://0.0.0.0:5000
+2025-12-06 12:08:33 - e-contactpro - INFO - [run_server.py:30] - 📊 Mode: Production
+2025-12-06 12:08:33 - e-contactpro - INFO - [run_server.py:31] - 🔒 CSRF Protection: Activée
+2025-12-06 12:08:33 - e-contactpro - INFO - [run_server.py:32] - ⏱️ Rate Limiting: Activé
+2025-12-06 12:11:58 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:11:58 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:11:58 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:11:58 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:11:58 - e-contactpro - WARNING - [run_server.py:26] - ⚠️ SECRET_KEY par défaut détectée - Changez-la en production!
+2025-12-06 12:11:58 - e-contactpro - INFO - [run_server.py:29] - 🚀 Lancement du serveur sur http://0.0.0.0:5000
+2025-12-06 12:11:58 - e-contactpro - INFO - [run_server.py:30] - 📊 Mode: Production
+2025-12-06 12:11:58 - e-contactpro - INFO - [run_server.py:31] - 🔒 CSRF Protection: Activée
+2025-12-06 12:11:58 - e-contactpro - INFO - [run_server.py:32] - ⏱️ Rate Limiting: Activé
+2025-12-06 12:13:06 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:13:06 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:13:06 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:13:06 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:13:07 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:13:07 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:13:07 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:13:28 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:13:29 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:13:29 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:13:29 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:13:30 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:13:30 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:13:30 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:15:42 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:15:42 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:15:42 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:15:42 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:15:43 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:15:43 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:15:43 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:22:30 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:22:30 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:22:30 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:22:30 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:22:31 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:22:31 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:22:31 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:24:54 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:24:54 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:24:54 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:24:54 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:24:55 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:24:55 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:24:55 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:27:40 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 12:27:41 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:27:41 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:27:41 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 12:27:42 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 12:27:42 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 12:27:42 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 13:07:18 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 13:07:18 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 13:07:18 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 13:07:18 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 13:07:19 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 13:07:19 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 13:07:19 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 13:09:23 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 13:09:23 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 13:09:23 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 13:09:23 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 13:09:24 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 13:09:24 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 13:09:24 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 16:49:43 - e-contactpro - WARNING - [logger.py:55] - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-12-06 16:49:43.138366
+2025-12-06 16:51:48 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 16:51:48 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 16:51:48 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 16:51:48 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 16:51:49 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 16:51:49 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 16:51:49 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 16:55:04 - e-contactpro - WARNING - [app.py:48] - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-12-06 16:55:04 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 16:55:04 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 16:55:04 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 16:55:05 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 16:55:05 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 16:55:05 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:10:34 - e-contactpro - INFO - [app.py:745] - Nouveau client inscrit (Beta Particulier): Amede Josue (borghost.ps4@gmx.com)
+2025-12-06 17:12:06 - e-contactpro - INFO - [app.py:1099] - Image optimisée: josue-amede_1765033926.433354.jpg
+2025-12-06 17:35:41 - e-contactpro - WARNING - [logger.py:55] - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-12-06 17:35:41.362209
+2025-12-06 17:40:23 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:40:23 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:40:23 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:40:23 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:40:23 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:40:23 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:40:27 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:40:27 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:40:27 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:40:27 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:40:27 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:40:27 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:42:33 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:42:33 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:42:33 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:42:33 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:42:33 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:42:33 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:46:15 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:46:15 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:46:15 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:46:15 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:46:15 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:46:15 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:47:29 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:47:29 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:47:29 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:47:29 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:47:29 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:47:29 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:48:44 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:48:44 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:48:44 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:48:44 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:48:44 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:48:44 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:59:58 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:59:58 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:59:58 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 17:59:58 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 17:59:58 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 17:59:58 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:08:49 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:08:49 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:08:49 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:08:49 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:08:49 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:08:49 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:10:43 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:10:43 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:10:43 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:10:43 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:10:43 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:10:43 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:10:46 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:10:46 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:10:46 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:10:46 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:10:46 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:10:46 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:11:08 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:11:08 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:11:08 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
+2025-12-06 18:11:08 - e-contactpro - WARNING - [app.py:53] - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-12-06 18:11:08 - e-contactpro - WARNING - [app.py:59] - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-12-06 18:11:08 - e-contactpro - INFO - [app.py:74] - ✅ Flask-Migrate activé
