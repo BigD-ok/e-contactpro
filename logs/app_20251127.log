@@ -1,0 +1,177 @@
+2025-11-27 09:35:56,176 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 09:35:56,315 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 09:35:56,337 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 09:35:58,504 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 09:35:58,516 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 09:36:16,842 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 09:36:16,980 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 09:36:16,994 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 09:36:19,345 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 09:36:19,361 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 09:48:38,379 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 09:48:38,517 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 09:48:38,530 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 09:48:40,670 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 09:48:40,682 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:25:05,186 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 11:25:05,322 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:25:05,335 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:25:07,460 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:25:07,473 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:27:16,996 - e-contactpro - WARNING - [ADMIN LOGIN] ❌ FAILED | IP: 192.168.1.111 | Time: 2025-11-27 11:27:16.996816
+2025-11-27 11:27:23,893 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 192.168.1.111 | Time: 2025-11-27 11:27:23.893771
+2025-11-27 11:30:27,654 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:30:27,654 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:30:27,668 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:31:24,271 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 11:31:24,414 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:31:24,414 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:31:24,427 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:31:26,600 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:31:26,600 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:31:26,615 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:32:03,013 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-11-27 11:32:03.013973
+2025-11-27 11:34:56,137 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:34:56,137 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:34:56,152 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:34:56,300 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:34:56,300 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:34:56,314 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:34:58,742 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-11-27 11:34:58.742534
+2025-11-27 11:38:47,498 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 11:38:47,641 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:38:47,643 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:38:47,657 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:38:49,890 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:38:49,890 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:38:49,905 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:39:11,906 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-11-27 11:39:11.906986
+2025-11-27 11:39:32,530 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-11-27 11:39:32.530783
+2025-11-27 11:51:19,206 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 11:51:19,351 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:51:19,351 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:51:19,366 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 11:52:30,460 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 11:52:30,460 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 11:52:30,475 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:01:53,539 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:01:53,687 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:01:53,687 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:01:53,701 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:02:19,955 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:02:20,096 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:02:20,096 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:02:20,111 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:02:44,641 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:02:44,641 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:02:44,656 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:04:06,253 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:04:06,401 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:04:06,401 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:04:06,416 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:05:24,003 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:05:24,147 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:05:24,147 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:05:24,162 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:07:23,677 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:07:23,677 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:07:23,694 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:09:25,822 - e-contactpro - INFO - Image optimisée: hicham-test_1764238165.796821.jpg
+2025-11-27 12:11:01,488 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-11-27 12:11:01.488818
+2025-11-27 12:11:53,024 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:11:53,167 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:11:53,167 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:11:53,182 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:11:55,457 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:11:55,457 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:11:55,473 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:13:49,896 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:13:50,038 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:13:50,038 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:13:50,054 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:14:14,362 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:14:14,505 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:14:14,506 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:14:14,521 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:14:16,910 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:14:16,910 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:14:16,930 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:16:17,966 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-11-27 12:16:17.966785
+2025-11-27 12:20:24,573 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:20:24,573 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:20:24,594 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:20:24,973 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:20:24,973 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:20:24,988 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:21:10,457 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:21:10,459 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:21:10,473 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:25:41,174 - e-contactpro - WARNING - [ADMIN LOGIN] ✅ SUCCESS | IP: 127.0.0.1 | Time: 2025-11-27 12:25:41.174811
+2025-11-27 12:29:50,396 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:29:50,541 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:29:50,541 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:29:50,556 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:31:45,154 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:31:45,297 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:31:45,299 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:31:45,314 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:32:16,465 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:32:16,466 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:32:16,481 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:32:37,909 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:32:37,909 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:32:37,923 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:33:09,880 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:33:10,037 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:33:10,037 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:33:10,051 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:36:50,796 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:36:50,796 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:36:50,812 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:37:14,773 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 12:37:14,921 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:37:14,921 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:37:14,936 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 12:37:51,925 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 12:37:51,925 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 12:37:51,941 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:05:26,803 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 13:05:26,942 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:05:26,942 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:05:26,955 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:06:15,695 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 13:06:15,833 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:06:15,833 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:06:15,847 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:32:05,487 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:32:05,487 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:32:05,500 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:35:48,284 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:35:48,284 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:35:48,298 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:36:18,330 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 13:36:18,470 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:36:18,472 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:36:18,484 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:39:02,976 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 13:39:03,139 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:39:03,139 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:39:03,153 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:39:16,129 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 13:39:16,271 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:39:16,271 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:39:16,284 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:55:19,390 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 13:55:19,527 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:55:19,529 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:55:19,542 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:57:30,709 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:57:30,710 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:57:30,722 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 13:58:37,107 - e-contactpro - WARNING - ⚠️ ATTENTION: Utilisation de SECRET_KEY par défaut! Changez-la en production!
+2025-11-27 13:58:37,246 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 13:58:37,246 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 13:58:37,259 - e-contactpro - INFO - ✅ Flask-Migrate activé
+2025-11-27 14:01:28,573 - e-contactpro - WARNING - ⚠️ ATTENTION: Mot de passe admin par défaut! Changez-le en production!
+2025-11-27 14:01:28,575 - e-contactpro - WARNING - ⚠️ URL Admin: /secure-admin/UH7sOjZHoHAGyBb5beHDcuMRLWhWBizDqNGTGc6XLO4
+2025-11-27 14:01:28,587 - e-contactpro - INFO - ✅ Flask-Migrate activé
